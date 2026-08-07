@@ -33,3 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Clinical Decision Support System (CDSS)**:
   - Built explainable CDSS module with Evidence Collector, Biomedical Rule Engine, Explanation Engine ("Why?" modal), and 4 editable report templates (`Doctor Report`, `Patient Report`, `Research Report`, `Hospital Report`).
   - Implemented FDA 21 CFR Part 11 compliant Doctor Approval Workflow with SHA-256 digital signature locking (`SIG-SHA256`).
+
+- **Device Connectivity Layer**:
+  - Implemented hardware abstraction layer (`lib/device_connectivity/`) supporting 5 providers: `SimulationDeviceProvider` (functional NeuroLab link), `BluetoothMockProvider`, `WifiMockProvider`, `UsbMockProvider`, and `ReplayMockProvider`.
+  - Added Device Manager, Device Registry, Connection State machine (`Disconnected`, `Scanning`, `Connecting`, `Connected`, `Streaming`, `Paused`, `Error`, `Reconnecting`), and real-time Device Health Telemetry.
