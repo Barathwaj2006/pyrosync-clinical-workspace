@@ -44,9 +44,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Professional Biomedical Visualization Engine**:
   - Built commercial-grade 60 FPS hardware-accelerated rendering engine (`lib/visualization_engine/`) targeting 2500 Hz high sampling rates.
-  - Multi-Channel Waveform Viewer (1-32 Ch, Raw vs Filtered overlay mode).
-  - Dual Cursor Measurement Tool (Cursor A, Cursor B, Δ Latency ms, Δ Amplitude µV).
-  - VEP Peak Markers (N75, P100, N145 latency & amplitude labels).
-  - Real-Time FFT & PSD Band Power Viewer (Delta, Theta, Alpha, Beta, Gamma, Mu).
-  - 2D Scalp Brain Heatmap (10-20 system electrode intensity plotting).
-  - Clinical Annotation Manager & Split-Screen Session Comparison View.
+  - Multi-Channel Waveform Viewer (1-32 Ch), Dual Cursor Measurement Tool, VEP Peak Markers (N75, P100, N145), FFT Spectral Power, 2D Scalp Heatmap, Clinical Annotation Manager, Split-Screen Session Comparison View.
+
+- **Universal Hardware Integration Framework**:
+  - Implemented abstract Plug-and-Play driver interface (`IHardwareDriver`) in `lib/hardware_integration/`.
+  - Configurable Packet Parser (custom header/footer, 8-32 ch, CRC32 checksum).
+  - Lock-Free Circular Stream Ring Buffer with overflow protection.
+  - Hardware Calibration Engine (Gain, Offset, Noise estimation).
+  - Virtual Hardware Test Harness (packet injection, 10% packet loss simulation, CRC corruption simulation, latency injector, OTA firmware compatibility check).
