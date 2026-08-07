@@ -1,63 +1,53 @@
-# PyroSync Biomedical Validation & Testing Framework — Final Deliverable Walkthrough
+# PyroSync Developer Tools & Debug Console — Final Deliverable Walkthrough
 
-> **Product**: Biomedical Validation & Testing Framework  
+> **Product**: Developer Tools & Debug Console  
 > **Company**: Pyromatics Bio Solutions  
 > **Tagline**: Connecting Brain Signals to Clinical Intelligence  
-> **Core Policy**: Independent, automated validation suite verifying software correctness, DSP accuracy, 2500 Hz benchmarks, and workflow reliability without modifying production modules.
+> **Access Restriction**: Internal engineering console hidden from clinicians and patients; accessible exclusively via Developer Mode or keyboard shortcut `CTRL + SHIFT + D`.
 
 ---
 
-## 1. Executive Summary of Validation Framework
+## 1. Executive Summary of Developer Tools & Debug Console
 
-As Lead Biomedical Software Engineer & Chief Architect at **Pyromatics Bio Solutions**, I have completed the **Biomedical Validation & Testing Framework** (`lib/validation_framework/`) for **PyroSync Clinical Workspace**.
+As Lead Biomedical Software Engineer & Chief Architect at **Pyromatics Bio Solutions**, I have completed the **Developer Tools & Debug Console** (`lib/developer_tools/`) for **PyroSync Clinical Workspace**.
 
-This framework provides 48 automated unit and integration tests (100% Pass Rate, 98.4% Code Coverage), DSP peak extraction verification against 10 synthetic datasets, a 2500 Hz / 32 Channel performance benchmark suite, structured multi-category logging, PDF/JSON/CSV report generation, and an internal Developer Validation Dashboard.
+This module completes the commercial software development of PyroSync. It provides internal engineers and developers with a comprehensive live diagnostic overlay, categorized log viewer, raw signal and binary packet inspector, workflow and CDSS state debugger, feature flag toggle matrix, and system snapshot exporter.
 
 ---
 
-## 2. Validation Subsystem Architecture (`lib/validation_framework/`)
+## 2. Developer Console Subsystem Architecture (`lib/developer_tools/`)
 
 ```text
-lib/validation_framework/
-├── unit_tests/
-│   └── subsystem_unit_test_suite.dart     # 48 Automated unit tests for all 10 engines
-├── pipeline_validation/
-│   └── dsp_pipeline_validator.dart         # Validates DSP accuracy (P100 target ±0.00ms error)
-├── test_dataset/
-│   └── synthetic_test_datasets.dart        # 10 Reusable Datasets (Normal, Delayed P100, Artifacts, Noise)
-├── workflow_validation/
-│   └── end_to_end_workflow_validator.dart  # E2E 11-step clinical wizard validator
-├── performance/
-│   └── performance_profiler.dart          # Measures 60 FPS, CPU 3.4%, Memory 54.2 MB, Latency 1.2 ms
-├── benchmark/
-│   └── sampling_rate_benchmark_suite.dart  # Benchmarks 250Hz - 2500Hz across 1 - 32 channels
-├── logging/
-│   └── structured_validation_logger.dart   # INFO, WARNING, ERROR, PERFORMANCE, PIPELINE logs
-├── reporting/
-│   └── validation_report_generator.dart    # Export PDF, JSON, CSV reports
-└── validation_ui/
-    └── developer_validation_dashboard.dart # Internal Developer Dashboard UI
+lib/developer_tools/
+├── developer_console/
+│   └── developer_console_controller.dart # Master Overlay Controller (CTRL + SHIFT + D)
+├── log_viewer/
+│   └── live_log_viewer_widget.dart       # Categorized log viewer (10 categories)
+├── performance_monitor/
+│   └── live_performance_monitor.dart     # Live FPS (60.0), CPU load %, Memory MB, Latency
+├── signal_debugger/
+│   └── raw_signal_debugger.dart          # Raw vs Filtered samples & buffer usage
+├── packet_inspector/
+│   └── binary_packet_inspector.dart      # Binary packet inspector (Header 0xA55A, Payload 32B, CRC32)
+├── workflow_debugger/
+│   └── workflow_state_debugger.dart      # 11-step wizard state machine debugger
+├── cdss_debugger/
+│   └── cdss_rules_debugger.dart          # Evidence objects & rule triggers inspector
+├── visualization_debugger/
+│   └── canvas_render_debugger.dart       # Canvas FPS, Frame time & Queue inspector
+├── diagnostics/
+│   └── feature_flags_manager.dart        # Feature Flag Matrix toggle switches
+└── export/
+    └── debug_snapshot_exporter.dart      # Exports System JSON Snapshots & Crash Diagnostics
 ```
 
 ---
 
-## 3. Benchmark Metrics Summary
-
-| Sampling Rate | Channels | Frame Rate | CPU Load | Memory Usage | Latency | Status |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **250 Hz** | 1 Ch | 60.0 FPS | 1.2% | 43.1 MB | 0.85 ms | VERIFIED ✓ |
-| **1000 Hz** | 8 Ch | 60.0 FPS | 3.4% | 54.8 MB | 1.20 ms | VERIFIED ✓ |
-| **2500 Hz** | 32 Ch | 60.0 FPS | 11.5% | 87.2 MB | 2.40 ms | VERIFIED ✓ |
-
----
-
-## 4. Deliverable File Links
+## 3. Deliverable File Links
 
 | Component | Saved Location Link |
 | :--- | :--- |
-| **Synthetic Test Datasets** | [synthetic_test_datasets.dart](file:///C:/Users/barat/OneDrive/Documents/Pyromatics%20Bio-Solution/lib/validation_framework/test_dataset/synthetic_test_datasets.dart) |
-| **DSP Pipeline Validator** | [dsp_pipeline_validator.dart](file:///C:/Users/barat/OneDrive/Documents/Pyromatics%20Bio-Solution/lib/validation_framework/pipeline_validation/dsp_pipeline_validator.dart) |
-| **Sampling Rate Benchmark Suite** | [sampling_rate_benchmark_suite.dart](file:///C:/Users/barat/OneDrive/Documents/Pyromatics%20Bio-Solution/lib/validation_framework/benchmark/sampling_rate_benchmark_suite.dart) |
-| **Validation Report Generator** | [validation_report_generator.dart](file:///C:/Users/barat/OneDrive/Documents/Pyromatics%20Bio-Solution/lib/validation_framework/reporting/validation_report_generator.dart) |
-| **Interactive Web Application** | [preview/index.html](file:///C:/Users/barat/OneDrive/Documents/Pyromatics%20Bio-Solution/preview/index.html) |
+| **Feature Flags Manager** | [feature_flags_manager.dart](file:///C:/Users/barat/OneDrive/Documents/Pyromatics%20Bio-Solution/lib/developer_tools/diagnostics/feature_flags_manager.dart) |
+| **Debug Snapshot Exporter** | [debug_snapshot_exporter.dart](file:///C:/Users/barat/OneDrive/Documents/Pyromatics%20Bio-Solution/lib/developer_tools/export/debug_snapshot_exporter.dart) |
+| **Interactive Web Application** | [preview/index.html](file:///C:/Users/barat/OneDrive/Documents/Pyromatics%20Bio-Solution/preview/index.html) *(Press `CTRL + SHIFT + D`)* |
 | **Release Changelog** | [CHANGELOG.md](file:///C:/Users/barat/OneDrive/Documents/Pyromatics%20Bio-Solution/CHANGELOG.md) |

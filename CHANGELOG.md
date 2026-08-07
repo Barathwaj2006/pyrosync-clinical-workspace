@@ -52,7 +52,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Biomedical Validation & Testing Framework**:
   - Built comprehensive validation suite (`lib/validation_framework/`) with 48 automated unit and integration tests (100% Pass Rate).
-  - Synthetic Test Dataset Generator (10 datasets: Normal VEP, Delayed P100, High Noise, Eye Blink, EMG, 50Hz Line Noise, Flat Line, Missing Samples, Packet Loss, Gaussian Noise).
-  - DSP Pipeline Validator (verifies N75/P100/N145 peak latencies within ±0.00ms accuracy).
-  - 2500 Hz Sampling Rate Benchmark Suite (1 to 32 Channels @ 60 FPS).
-  - Structured Validation Logger & Automated Report Generator (PDF / JSON / CSV exports).
+  - Synthetic Test Dataset Generator (10 datasets), DSP Pipeline Validator, 2500 Hz Benchmark Suite, Validation Report Generator (PDF/JSON/CSV).
+
+- **Developer Tools & Debug Console**:
+  - Built internal engineering console (`lib/developer_tools/`) hidden behind Developer Mode / `CTRL + SHIFT + D`.
+  - Live System Dashboard, Categorized Live Log Viewer, Signal & Binary Packet Inspector (Header `0xA55A`, CRC32, Payload `32B`), Workflow & CDSS State Debugger, Feature Flags Matrix, and System JSON Snapshot Exporter.
