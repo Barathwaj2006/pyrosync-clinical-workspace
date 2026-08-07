@@ -41,5 +41,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Clinical Workflow Integration Module**:
   - Implemented master 11-step Guided Workflow Controller (`lib/clinical_workflow/`) orchestrating Patient ➔ Session ➔ Protocol ➔ Device ➔ Recording ➔ DSP ➔ CDSS ➔ Report ➔ Doctor Sign-off ➔ Archival.
   - Built Pre-Recording Safety Checklist (verifies 8 critical conditions before enabling recording).
-  - Built Automated Post-Recording Processing Pipeline.
-  - Added Live Chronological Session Timeline Visualizer & Auto-Save Recovery Manager.
+
+- **Professional Biomedical Visualization Engine**:
+  - Built commercial-grade 60 FPS hardware-accelerated rendering engine (`lib/visualization_engine/`) targeting 2500 Hz high sampling rates.
+  - Multi-Channel Waveform Viewer (1-32 Ch, Raw vs Filtered overlay mode).
+  - Dual Cursor Measurement Tool (Cursor A, Cursor B, Δ Latency ms, Δ Amplitude µV).
+  - VEP Peak Markers (N75, P100, N145 latency & amplitude labels).
+  - Real-Time FFT & PSD Band Power Viewer (Delta, Theta, Alpha, Beta, Gamma, Mu).
+  - 2D Scalp Brain Heatmap (10-20 system electrode intensity plotting).
+  - Clinical Annotation Manager & Split-Screen Session Comparison View.
