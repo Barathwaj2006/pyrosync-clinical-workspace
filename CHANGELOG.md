@@ -36,4 +36,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Device Connectivity Layer**:
   - Implemented hardware abstraction layer (`lib/device_connectivity/`) supporting 5 providers: `SimulationDeviceProvider` (functional NeuroLab link), `BluetoothMockProvider`, `WifiMockProvider`, `UsbMockProvider`, and `ReplayMockProvider`.
-  - Added Device Manager, Device Registry, Connection State machine (`Disconnected`, `Scanning`, `Connecting`, `Connected`, `Streaming`, `Paused`, `Error`, `Reconnecting`), and real-time Device Health Telemetry.
+  - Added Device Manager, Device Registry, Connection State machine, and real-time Device Health Telemetry.
+
+- **Clinical Workflow Integration Module**:
+  - Implemented master 11-step Guided Workflow Controller (`lib/clinical_workflow/`) orchestrating Patient ➔ Session ➔ Protocol ➔ Device ➔ Recording ➔ DSP ➔ CDSS ➔ Report ➔ Doctor Sign-off ➔ Archival.
+  - Built Pre-Recording Safety Checklist (verifies 8 critical conditions before enabling recording).
+  - Built Automated Post-Recording Processing Pipeline.
+  - Added Live Chronological Session Timeline Visualizer & Auto-Save Recovery Manager.
