@@ -49,7 +49,7 @@ class DeveloperEngineNotifier extends StateNotifier<DeveloperEngineState> {
             logs: [
               DeveloperLogEntry(type: LogType.navigation, message: 'App launched. Shell initialized.', timestamp: DateTime.now()),
               DeveloperLogEntry(type: LogType.session, message: 'Session SES-2026-0807 loaded for Patient P-10929.', timestamp: DateTime.now()),
-              DeveloperLogEntry(type: LogType.signal, message: 'Hardware provider COM3 attached (2500 Hz).', timestamp: DateTime.now()),
+              DeveloperLogEntry(type: LogType.signal, message: 'Hardware provider: Disconnected (No device attached).', timestamp: DateTime.now()),
               DeveloperLogEntry(type: LogType.ai, message: 'AI Quality Engine initialized (Model v2.1-v).', timestamp: DateTime.now()),
             ],
             memoryUsageMb: 84.2,
@@ -133,7 +133,7 @@ class _DeveloperOverlayWidget extends ConsumerWidget {
           ),
           padding: const EdgeInsets.all(14),
           child: Column(
-            crossAxisAlignment: CrossAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

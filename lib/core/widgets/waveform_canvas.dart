@@ -136,11 +136,11 @@ class VepPainter extends CustomPainter {
 
     // 1. Draw Grid Lines
     final gridPaintMajor = Paint()
-      :color = AppColors.waveformGridMajor
+      ..color = AppColors.waveformGridMajor
       ..strokeWidth = 1.0;
 
     final gridPaintMinor = Paint()
-      :color = AppColors.waveformGridMinor
+      ..color = AppColors.waveformGridMinor
       ..strokeWidth = 0.5;
 
     // Horizontal Voltage Grid (every 25px = ~5uV)

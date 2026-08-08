@@ -50,9 +50,9 @@ class NotificationEngineNotifier extends StateNotifier<List<PyroNotification>> {
           ),
           PyroNotification(
             id: 'NOTIF-102',
-            title: 'Amplifier Calibration Passed',
-            message: 'COM3 BioAmp sampling at 2500 Hz. All electrode impedances < 3.2 kΩ.',
-            severity: NotificationSeverity.success,
+            title: 'System Initialized',
+            message: 'PyroSync workspace ready. Hardware state: Disconnected.',
+            severity: NotificationSeverity.info,
             timestamp: DateTime.now().subtract(const Duration(minutes: 30)),
           ),
         ]);

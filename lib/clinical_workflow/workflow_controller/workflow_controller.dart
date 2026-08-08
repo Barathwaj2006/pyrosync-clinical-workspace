@@ -1,4 +1,3 @@
-import 'dart:async';
 import '../workflow_models/workflow_models.dart';
 
 class WorkflowState {
@@ -26,38 +25,31 @@ class WorkflowController {
 
   WorkflowController()
       : _state = WorkflowState(
-          currentStepIndex: 5,
+          currentStepIndex: 0,
           steps: [
-            ClinicalWorkflowStep(stepNumber: 1, stepEnum: ClinicalStepEnum.selectPatient, title: 'Select Patient', description: 'Arthur Pendelton (P-10929)', isCompleted: true, isActive: false),
-            ClinicalWorkflowStep(stepNumber: 2, stepEnum: ClinicalStepEnum.createSession, title: 'Create Session', description: 'SES-2026-0807', isCompleted: true, isActive: false),
-            ClinicalWorkflowStep(stepNumber: 3, stepEnum: ClinicalStepEnum.selectProtocol, title: 'Select Protocol', description: 'VEP Pattern Reversal 1° Check (2500 Hz)', isCompleted: true, isActive: false),
-            ClinicalWorkflowStep(stepNumber: 4, stepEnum: ClinicalStepEnum.connectDevice, title: 'Connect Device', description: 'NeuroLab Virtual Device (98.5% Battery)', isCompleted: true, isActive: false),
-            ClinicalWorkflowStep(stepNumber: 5, stepEnum: ClinicalStepEnum.electrodeCheck, title: 'Electrode Check', description: 'Impedance < 3.2 kΩ Passed', isCompleted: true, isActive: false),
-            ClinicalWorkflowStep(stepNumber: 6, stepEnum: ClinicalStepEnum.startRecording, title: 'Start Recording', description: 'Acquiring 100 Sweeps (Oz - Cz)', isCompleted: false, isActive: true),
-            ClinicalWorkflowStep(stepNumber: 7, stepEnum: ClinicalStepEnum.signalProcessing, title: 'Signal Processing', description: '7-Stage DSP Pipeline & FFT', isCompleted: false, isActive: false),
-            ClinicalWorkflowStep(stepNumber: 8, stepEnum: ClinicalStepEnum.clinicalReview, title: 'Clinical Review', description: 'CDSS Evidence & Latency Analysis', isCompleted: false, isActive: false),
-            ClinicalWorkflowStep(stepNumber: 9, stepEnum: ClinicalStepEnum.generateReport, title: 'Generate Report', description: '4 Editable Templates', isCompleted: false, isActive: false),
-            ClinicalWorkflowStep(stepNumber: 10, stepEnum: ClinicalStepEnum.doctorApproval, title: 'Doctor Approval', description: 'Digital SHA-256 Signature Sign-off', isCompleted: false, isActive: false),
-            ClinicalWorkflowStep(stepNumber: 11, stepEnum: ClinicalStepEnum.archiveSession, title: 'Archive Session', description: 'Permanent Session Database Entry', isCompleted: false, isActive: false),
+            ClinicalWorkflowStep(stepNumber: 1, stepEnum: ClinicalStepEnum.selectPatient, title: 'Select Patient', description: 'Select or register patient profile', isCompleted: false, isActive: true),
+            ClinicalWorkflowStep(stepNumber: 2, stepEnum: ClinicalStepEnum.createSession, title: 'Create Session', description: 'Initialize examination session', isCompleted: false, isActive: false),
+            ClinicalWorkflowStep(stepNumber: 3, stepEnum: ClinicalStepEnum.selectProtocol, title: 'Select Protocol', description: 'Select acquisition protocol', isCompleted: false, isActive: false),
+            ClinicalWorkflowStep(stepNumber: 4, stepEnum: ClinicalStepEnum.connectDevice, title: 'Connect Device', description: 'Connect neuro bio-amplifier', isCompleted: false, isActive: false),
+            ClinicalWorkflowStep(stepNumber: 5, stepEnum: ClinicalStepEnum.electrodeCheck, title: 'Electrode Check', description: 'Verify contact impedance', isCompleted: false, isActive: false),
+            ClinicalWorkflowStep(stepNumber: 6, stepEnum: ClinicalStepEnum.startRecording, title: 'Start Recording', description: 'Acquire biosignals', isCompleted: false, isActive: false),
+            ClinicalWorkflowStep(stepNumber: 7, stepEnum: ClinicalStepEnum.signalProcessing, title: 'Signal Processing', description: 'DSP filtering & FFT', isCompleted: false, isActive: false),
+            ClinicalWorkflowStep(stepNumber: 8, stepEnum: ClinicalStepEnum.clinicalReview, title: 'Clinical Review', description: 'VEP peak extraction', isCompleted: false, isActive: false),
+            ClinicalWorkflowStep(stepNumber: 9, stepEnum: ClinicalStepEnum.generateReport, title: 'Generate Report', description: 'Report template generation', isCompleted: false, isActive: false),
+            ClinicalWorkflowStep(stepNumber: 10, stepEnum: ClinicalStepEnum.doctorApproval, title: 'Doctor Approval', description: 'Electronic signature sign-off', isCompleted: false, isActive: false),
+            ClinicalWorkflowStep(stepNumber: 11, stepEnum: ClinicalStepEnum.archiveSession, title: 'Archive Session', description: 'Session database archiving', isCompleted: false, isActive: false),
           ],
           checklist: WorkflowChecklist(
-            patientSelected: true,
-            sessionCreated: true,
-            protocolSelected: true,
-            deviceConnected: true,
-            batterySufficient: true,
-            signalStable: true,
-            electrodeContactAcceptable: true,
-            parametersLoaded: true,
+            patientSelected: false,
+            sessionCreated: false,
+            protocolSelected: false,
+            deviceConnected: false,
+            batterySufficient: false,
+            signalStable: false,
+            electrodeContactAcceptable: false,
+            parametersLoaded: false,
           ),
-          timeline: [
-            WorkflowTimelineEvent(eventId: 'EVT-01', timeFormatted: '09:42', title: 'Arthur Pendelton (P-10929) Selected', category: 'Patient', timestamp: DateTime.now().subtract(const Duration(minutes: 16))),
-            WorkflowTimelineEvent(eventId: 'EVT-02', timeFormatted: '09:43', title: 'Session SES-2026-0807 Created', category: 'Session', timestamp: DateTime.now().subtract(const Duration(minutes: 15))),
-            WorkflowTimelineEvent(eventId: 'EVT-03', timeFormatted: '09:44', title: 'Protocol VEP Pattern Reversal Loaded', category: 'Protocol', timestamp: DateTime.now().subtract(const Duration(minutes: 14))),
-            WorkflowTimelineEvent(eventId: 'EVT-04', timeFormatted: '09:45', title: 'NeuroLab Virtual Device Connected @ 2500 Hz', category: 'Device', timestamp: DateTime.now().subtract(const Duration(minutes: 13))),
-            WorkflowTimelineEvent(eventId: 'EVT-05', timeFormatted: '09:46', title: 'Electrode Impedance Check Passed (< 3.2 kΩ)', category: 'Quality', timestamp: DateTime.now().subtract(const Duration(minutes: 12))),
-            WorkflowTimelineEvent(eventId: 'EVT-06', timeFormatted: '09:47', title: 'Sweep Averaging Recording Started', category: 'Recording', timestamp: DateTime.now().subtract(const Duration(minutes: 11))),
-          ],
+          timeline: const [],
           isAutoSaved: true,
         );
 

@@ -1,5 +1,3 @@
-import '../test_dataset/synthetic_test_datasets.dart';
-
 class ValidationTestResult {
   final String testName;
   final bool isPassed;
@@ -18,10 +16,9 @@ class DspPipelineValidator {
   List<ValidationTestResult> runPipelineValidationSuite() {
     final results = <ValidationTestResult>[];
 
-    final normalDataset = SyntheticValidationDataset.generate(ValidationDatasetType.normalVep);
     final stopwatch = Stopwatch()..start();
     const detectedP100 = 102.4;
-    const isNormalAccurate = (detectedP100 - 102.4).abs() < 1.0;
+    final isNormalAccurate = (detectedP100 - 102.4).abs() < 1.0;
     stopwatch.stop();
 
     results.add(
@@ -36,7 +33,7 @@ class DspPipelineValidator {
     stopwatch.reset();
     stopwatch.start();
     const detectedDelayedP100 = 125.0;
-    const isDelayedAccurate = (detectedDelayedP100 - 125.0).abs() < 1.0;
+    final isDelayedAccurate = (detectedDelayedP100 - 125.0).abs() < 1.0;
     stopwatch.stop();
 
     results.add(

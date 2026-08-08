@@ -10,6 +10,11 @@
 .svn/
 migrate_working_dir/
 
+# Local Scratch & Agent Artifacts
+scratch/
+audit/
+*.md.tmp
+
 # User-specific stuff
 .idea/
 .vscode/

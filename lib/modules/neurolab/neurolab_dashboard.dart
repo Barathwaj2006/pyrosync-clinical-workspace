@@ -19,14 +19,14 @@ class NeuroLabDashboard extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
-        crossAxisAlignment: CrossAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header Bar
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Column(
-                crossAxisAlignment: CrossAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
@@ -67,7 +67,7 @@ class NeuroLabDashboard extends ConsumerWidget {
                         // Virtual Device Card
                         PyroCard(
                           child: Column(
-                            crossAxisAlignment: CrossAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -124,7 +124,7 @@ class NeuroLabDashboard extends ConsumerWidget {
                         // Training Preset Library Card
                         PyroCard(
                           child: Column(
-                            crossAxisAlignment: CrossAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text('SIMULATION & TRAINING PRESET LIBRARY', style: PyroTypography.heading2(true)),
                               const SizedBox(height: 12),
@@ -150,7 +150,7 @@ class NeuroLabDashboard extends ConsumerWidget {
                         // Artifact Generator Card
                         PyroCard(
                           child: Column(
-                            crossAxisAlignment: CrossAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text('ARTIFACT GENERATOR (INJECT NOISE)', style: PyroTypography.heading2(true)),
                               const SizedBox(height: 16),
@@ -190,7 +190,7 @@ class NeuroLabDashboard extends ConsumerWidget {
                         // EEG Rhythm Generator Card
                         PyroCard(
                           child: Column(
-                            crossAlignment: CrossAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text('EEG RHYTHM MIXER', style: PyroTypography.heading2(true)),
                               const SizedBox(height: 12),
@@ -294,7 +294,7 @@ class NeuroLabDashboard extends ConsumerWidget {
 
   Widget _buildRhythmSlider(String label, double val, ValueChanged<double> onChanged) {
     return Column(
-      crossAxisAlignment: CrossAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

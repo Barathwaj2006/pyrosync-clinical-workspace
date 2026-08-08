@@ -1,5 +1,3 @@
-import 'dart:async';
-
 class BenchmarkMetrics {
   final double samplingRateHz;
   final int channelCount;

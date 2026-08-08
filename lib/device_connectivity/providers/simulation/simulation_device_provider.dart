@@ -9,12 +9,12 @@ class SimulationDeviceProvider implements ISignalProvider {
   String get providerId => 'SIM-NEUROLAB-01';
 
   @override
-  String get providerName => 'NeuroLab Virtual Laboratory Signal Provider';
+  String get displayName => 'NeuroLab Virtual Laboratory Signal Provider';
 
   @override
+  SignalConnectionState get connectionState => _neuroLabSignalProvider.connectionState;
+
   double get targetSamplingRateHz => 2500.0;
-
-  @override
   int get channelCount => 8;
 
   @override
@@ -23,8 +23,13 @@ class SimulationDeviceProvider implements ISignalProvider {
   }
 
   @override
-  Future<bool> disconnect() async {
-    return await _neuroLabSignalProvider.disconnect();
+  Future<void> disconnect() async {
+    await _neuroLabSignalProvider.disconnect();
+  }
+
+  @override
+  Future<void> sendStimulusTrigger(int triggerCode) async {
+    await _neuroLabSignalProvider.sendStimulusTrigger(triggerCode);
   }
 
   @override
@@ -33,11 +38,7 @@ class SimulationDeviceProvider implements ISignalProvider {
   @override
   Stream<SignalConnectionState> get connectionStateStream => _neuroLabSignalProvider.connectionStateStream;
 
-  @override
-  SignalConnectionState get currentConnectionState => _neuroLabSignalProvider.currentConnectionState;
-
-  @override
   Future<Map<String, double>> fetchChannelImpedances() async {
-    return await _neuroLabSignalProvider.fetchChannelImpedances();
+    return {'Oz': 1.5, 'Cz': 2.4, 'O1': 1.8, 'O2': 2.1, 'Fz': 2.0, 'Pz': 1.9, 'T3': 2.2, 'T4': 2.3};
   }
 }

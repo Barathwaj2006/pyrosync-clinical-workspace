@@ -10,7 +10,7 @@ class HelpScreen extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
-        crossAxisAlignment: CrossAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('CLINICAL GUIDELINES & STANDARDS', style: PyroTypography.heading1(true)),
           Text('International Federation of Clinical Neurophysiology (IFCN) VEP Standards.', style: PyroTypography.body(true)),
@@ -19,7 +19,7 @@ class HelpScreen extends StatelessWidget {
           Expanded(
             child: PyroCard(
               child: Column(
-                crossAxisAlignment: CrossAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('RECOMMENDED VEP ELECTRODE PLACEMENT (10-20 SYSTEM)', style: PyroTypography.heading2(true)),
                   const SizedBox(height: 16),

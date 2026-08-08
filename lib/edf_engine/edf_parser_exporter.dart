@@ -49,11 +49,11 @@ class EdfSignalHeader {
 }
 
 class EdfParserExporter {
-  static EdfHeader parseHeader(Uint8List bytes) {
+  static EdfHeader parseHeader(Uint8List bytes, {String? customPatientId}) {
     return EdfHeader(
       version: '0',
-      patientId: 'Arthur Pendelton (P-10929)',
-      recordingId: 'Startdate 07-AUG-2026 PyroSync VEP/EEG',
+      patientId: customPatientId ?? 'Anonymous Patient (EDF-RAW)',
+      recordingId: 'Startdate ${DateTime.now().toIso8601String().substring(0, 10)} PyroSync VEP/EEG',
       startDate: '07.08.26',
       startTime: '09.42.00',
       headerBytes: 2048,

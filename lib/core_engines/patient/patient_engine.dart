@@ -10,6 +10,7 @@ class PatientRecord {
   final List<String> medicalHistory;
   final List<String> previousSessionIds;
   final String doctorNotes;
+  final DateTime createdAt;
 
   PatientRecord({
     required this.id,
@@ -21,24 +22,30 @@ class PatientRecord {
     required this.medicalHistory,
     required this.previousSessionIds,
     required this.doctorNotes,
-  });
+    DateTime? createdAt,
+  }) : createdAt = createdAt ?? DateTime.now();
 
   PatientRecord copyWith({
     String? fullName,
+    String? mrn,
+    String? dob,
+    String? gender,
     String? primaryDiagnosis,
     String? doctorNotes,
     List<String>? medicalHistory,
+    List<String>? previousSessionIds,
   }) {
     return PatientRecord(
       id: id,
-      mrn: mrn,
+      mrn: mrn ?? this.mrn,
       fullName: fullName ?? this.fullName,
-      dob: dob,
-      gender: gender,
+      dob: dob ?? this.dob,
+      gender: gender ?? this.gender,
       primaryDiagnosis: primaryDiagnosis ?? this.primaryDiagnosis,
       medicalHistory: medicalHistory ?? this.medicalHistory,
-      previousSessionIds: previousSessionIds,
+      previousSessionIds: previousSessionIds ?? this.previousSessionIds,
       doctorNotes: doctorNotes ?? this.doctorNotes,
+      createdAt: createdAt,
     );
   }
 }
@@ -69,48 +76,20 @@ class PatientEngineNotifier extends StateNotifier<PatientState> {
   PatientEngineNotifier()
       : super(
           PatientState(
-            patientList: [
-              PatientRecord(
-                id: 'PAT-10929',
-                mrn: 'P-10929',
-                fullName: 'Arthur Pendelton',
-                dob: '1962-11-04',
-                gender: 'Male',
-                primaryDiagnosis: 'Optic Neuritis (OD)',
-                medicalHistory: ['Optic neuritis (2025)', 'Hypertension'],
-                previousSessionIds: ['SES-2025-1102', 'SES-2026-0210', 'SES-2026-0807'],
-                doctorNotes: 'Patient presented with blurry vision in right eye. Baseline VEP demonstrated P100 delay (114.8 ms).',
-              ),
-              PatientRecord(
-                id: 'PAT-10928',
-                mrn: 'P-10928',
-                fullName: 'Eleanor Vance',
-                dob: '1984-03-12',
-                gender: 'Female',
-                primaryDiagnosis: 'Routine Screening',
-                medicalHistory: ['No prior visual pathology'],
-                previousSessionIds: ['SES-2026-0801'],
-                doctorNotes: 'Normal P100 latency (101.4 ms) across both eyes.',
-              ),
-              PatientRecord(
-                id: 'PAT-10930',
-                mrn: 'P-10930',
-                fullName: 'Clara Oswald',
-                dob: '1991-07-22',
-                gender: 'Female',
-                primaryDiagnosis: 'Epilepsy Screening',
-                medicalHistory: ['Absence seizure history'],
-                previousSessionIds: ['SES-2026-0807'],
-                doctorNotes: 'Routine 16-channel EEG requested.',
-              ),
-            ],
+            patientList: const [],
+            activePatient: null,
           ),
-        ) {
-    // Select first patient as active by default
-    selectPatient(state.patientList.first.id);
-  }
+        );
 
-  void selectPatient(String patientId) {
+  void selectPatient(String? patientId) {
+    if (patientId == null || state.patientList.isEmpty) {
+      state = PatientState(
+        patientList: state.patientList,
+        activePatient: null,
+        searchQuery: state.searchQuery,
+      );
+      return;
+    }
     final found = state.patientList.firstWhere((p) => p.id == patientId, orElse: () => state.patientList.first);
     state = PatientState(
       patientList: state.patientList,
@@ -128,24 +107,31 @@ class PatientEngineNotifier extends StateNotifier<PatientState> {
   }
 
   void addPatient(PatientRecord patient) {
+    final newList = [...state.patientList, patient];
     state = PatientState(
-      patientList: [...state.patientList, patient],
+      patientList: newList,
       activePatient: patient,
       searchQuery: state.searchQuery,
     );
   }
 
-  void updateDoctorNotes(String patientId, String notes) {
-    final updatedList = state.patientList.map((p) {
-      if (p.id == patientId) {
-        return p.copyWith(doctorNotes: notes);
-      }
-      return p;
-    }).toList();
-
+  void updatePatient(PatientRecord updated) {
+    final updatedList = state.patientList.map((p) => p.id == updated.id ? updated : p).toList();
     state = PatientState(
       patientList: updatedList,
-      activePatient: state.activePatient?.id == patientId ? state.activePatient!.copyWith(doctorNotes: notes) : state.activePatient,
+      activePatient: state.activePatient?.id == updated.id ? updated : state.activePatient,
+      searchQuery: state.searchQuery,
+    );
+  }
+
+  void deletePatient(String patientId) {
+    final updatedList = state.patientList.where((p) => p.id != patientId).toList();
+    final newActive = state.activePatient?.id == patientId
+        ? (updatedList.isNotEmpty ? updatedList.first : null)
+        : state.activePatient;
+    state = PatientState(
+      patientList: updatedList,
+      activePatient: newActive,
       searchQuery: state.searchQuery,
     );
   }

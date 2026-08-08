@@ -15,38 +15,48 @@ enum SessionLifecycle {
 class ClinicalSession {
   final String sessionId;
   final String patientId;
+  final String patientName;
   final String protocolId;
+  final String protocolName;
   final DateTime recordingDate;
   final Duration duration;
   final SessionLifecycle status;
   final String attendingDoctor;
   final double signalQualityScore;
+  final List<double>? acquiredWaveform;
 
   ClinicalSession({
     required this.sessionId,
     required this.patientId,
+    required this.patientName,
     required this.protocolId,
+    required this.protocolName,
     required this.recordingDate,
     required this.duration,
     required this.status,
     required this.attendingDoctor,
     required this.signalQualityScore,
+    this.acquiredWaveform,
   });
 
   ClinicalSession copyWith({
     SessionLifecycle? status,
     Duration? duration,
     double? signalQualityScore,
+    List<double>? acquiredWaveform,
   }) {
     return ClinicalSession(
       sessionId: sessionId,
       patientId: patientId,
+      patientName: patientName,
       protocolId: protocolId,
+      protocolName: protocolName,
       recordingDate: recordingDate,
       duration: duration ?? this.duration,
       status: status ?? this.status,
       attendingDoctor: attendingDoctor,
       signalQualityScore: signalQualityScore ?? this.signalQualityScore,
+      acquiredWaveform: acquiredWaveform ?? this.acquiredWaveform,
     );
   }
 }
@@ -66,36 +76,42 @@ class SessionEngineNotifier extends StateNotifier<SessionState> {
   SessionEngineNotifier()
       : super(
           SessionState(
-            sessions: [
-              ClinicalSession(
-                sessionId: 'SES-2026-0807',
-                patientId: 'PAT-10929',
-                protocolId: 'vep-pat-1deg',
-                recordingDate: DateTime.now(),
-                duration: const Duration(minutes: 12, seconds: 45),
-                status: SessionLifecycle.analyzing,
-                attendingDoctor: 'Dr. Elena Vance',
-                signalQualityScore: 94.5,
-              ),
-              ClinicalSession(
-                sessionId: 'SES-2026-0801',
-                patientId: 'PAT-10928',
-                protocolId: 'vep-pat-1deg',
-                recordingDate: DateTime.now().subtract(const Duration(days: 6)),
-                duration: const Duration(minutes: 10),
-                status: SessionLifecycle.completed,
-                attendingDoctor: 'Dr. Elena Vance',
-                signalQualityScore: 98.2,
-              ),
-            ],
+            sessions: const [],
+            activeSession: null,
           ),
-        ) {
-    if (state.sessions.isNotEmpty) {
-      selectSession(state.sessions.first.sessionId);
-    }
+        );
+
+  void createSession({
+    required String patientId,
+    required String patientName,
+    required String protocolId,
+    required String protocolName,
+    required String attendingDoctor,
+  }) {
+    final newSession = ClinicalSession(
+      sessionId: 'SES-${DateTime.now().millisecondsSinceEpoch.toString().substring(5)}',
+      patientId: patientId,
+      patientName: patientName,
+      protocolId: protocolId,
+      protocolName: protocolName,
+      recordingDate: DateTime.now(),
+      duration: Duration.zero,
+      status: SessionLifecycle.preparing,
+      attendingDoctor: attendingDoctor,
+      signalQualityScore: 0.0,
+    );
+
+    state = SessionState(
+      sessions: [...state.sessions, newSession],
+      activeSession: newSession,
+    );
   }
 
-  void selectSession(String sessionId) {
+  void selectSession(String? sessionId) {
+    if (sessionId == null || state.sessions.isEmpty) {
+      state = SessionState(sessions: state.sessions, activeSession: null);
+      return;
+    }
     final active = state.sessions.firstWhere((s) => s.sessionId == sessionId, orElse: () => state.sessions.first);
     state = SessionState(sessions: state.sessions, activeSession: active);
   }
@@ -103,6 +119,18 @@ class SessionEngineNotifier extends StateNotifier<SessionState> {
   void transitionLifecycle(SessionLifecycle newLifecycle) {
     if (state.activeSession == null) return;
     final updatedSession = state.activeSession!.copyWith(status: newLifecycle);
+    final updatedList = state.sessions.map((s) => s.sessionId == updatedSession.sessionId ? updatedSession : s).toList();
+
+    state = SessionState(sessions: updatedList, activeSession: updatedSession);
+  }
+
+  void updateSessionData({Duration? duration, double? qualityScore, List<double>? waveform}) {
+    if (state.activeSession == null) return;
+    final updatedSession = state.activeSession!.copyWith(
+      duration: duration,
+      signalQualityScore: qualityScore,
+      acquiredWaveform: waveform,
+    );
     final updatedList = state.sessions.map((s) => s.sessionId == updatedSession.sessionId ? updatedSession : s).toList();
 
     state = SessionState(sessions: updatedList, activeSession: updatedSession);

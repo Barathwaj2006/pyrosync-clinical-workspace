@@ -5,7 +5,6 @@ enum UserRole {
   technician,
   administrator,
   researcher,
-  patient,
 }
 
 class UserPermissions {
@@ -57,54 +56,74 @@ class UserPermissions {
           canManageUsers: false,
           canExportData: true,
         );
-      case UserRole.patient:
-        return const UserPermissions(
-          canAcquireSignal: false,
-          canModifyProtocols: false,
-          canSignReports: false,
-          canManageUsers: false,
-          canExportData: false,
-        );
     }
   }
 }
 
-class UserSession {
-  final String userId;
+class ClinicianProfile {
   final String fullName;
+  final String title;
+  final String institution;
+  final String credentials;
   final String email;
-  final UserRole role;
-  final UserPermissions permissions;
-  final DateTime loginTime;
 
-  UserSession({
-    required this.userId,
+  const ClinicianProfile({
     required this.fullName,
+    required this.title,
+    required this.institution,
+    required this.credentials,
     required this.email,
-    required this.role,
-    required this.permissions,
-    required this.loginTime,
   });
+
+  bool get isConfigured => fullName != 'Unconfigured Clinician' && fullName.trim().isNotEmpty;
+
+  ClinicianProfile copyWith({
+    String? fullName,
+    String? title,
+    String? institution,
+    String? credentials,
+    String? email,
+  }) {
+    return ClinicianProfile(
+      fullName: fullName ?? this.fullName,
+      title: title ?? this.title,
+      institution: institution ?? this.institution,
+      credentials: credentials ?? this.credentials,
+      email: email ?? this.email,
+    );
+  }
+
+  factory ClinicianProfile.defaultProfile() {
+    return const ClinicianProfile(
+      fullName: 'Unconfigured Clinician',
+      title: 'Attending Neurologist',
+      institution: 'Pyromatics Medical Center',
+      credentials: 'MD, PhD',
+      email: 'clinician@pyromaticsbio.com',
+    );
+  }
 }
 
 class AuthState {
   final bool isAuthenticated;
-  final UserSession? currentSession;
+  final ClinicianProfile profile;
+  final UserRole role;
+  final UserPermissions permissions;
 
-  AuthState({required this.isAuthenticated, this.currentSession});
+  AuthState({
+    required this.isAuthenticated,
+    required this.profile,
+    required this.role,
+    required this.permissions,
+  });
 
   factory AuthState.initial() {
     final defaultRole = UserRole.doctor;
     return AuthState(
       isAuthenticated: true,
-      currentSession: UserSession(
-        userId: 'DR-88902',
-        fullName: 'Dr. Elena Vance',
-        email: 'e.vance@pyromaticsbio.com',
-        role: defaultRole,
-        permissions: UserPermissions.fromRole(defaultRole),
-        loginTime: DateTime.now(),
-      ),
+      profile: ClinicianProfile.defaultProfile(),
+      role: defaultRole,
+      permissions: UserPermissions.fromRole(defaultRole),
     );
   }
 }
@@ -116,36 +135,34 @@ final authEngineProvider = StateNotifierProvider<AuthEngineNotifier, AuthState>(
 class AuthEngineNotifier extends StateNotifier<AuthState> {
   AuthEngineNotifier() : super(AuthState.initial());
 
-  void login(String email, String password, UserRole role) {
+  void updateProfile({
+    String? fullName,
+    String? title,
+    String? institution,
+    String? credentials,
+    String? email,
+  }) {
+    final updatedProfile = state.profile.copyWith(
+      fullName: fullName,
+      title: title,
+      institution: institution,
+      credentials: credentials,
+      email: email,
+    );
     state = AuthState(
-      isAuthenticated: true,
-      currentSession: UserSession(
-        userId: 'USER-${DateTime.now().millisecondsSinceEpoch}',
-        fullName: role == UserRole.doctor ? 'Dr. Elena Vance' : 'J. Miller (Tech)',
-        email: email,
-        role: role,
-        permissions: UserPermissions.fromRole(role),
-        loginTime: DateTime.now(),
-      ),
+      isAuthenticated: state.isAuthenticated,
+      profile: updatedProfile,
+      role: state.role,
+      permissions: state.permissions,
     );
   }
 
-  void logout() {
-    state = AuthState(isAuthenticated: false, currentSession: null);
-  }
-
-  void switchRole(UserRole role) {
-    if (state.currentSession == null) return;
+  void switchRole(UserRole newRole) {
     state = AuthState(
-      isAuthenticated: true,
-      currentSession: UserSession(
-        userId: state.currentSession!.userId,
-        fullName: state.currentSession!.fullName,
-        email: state.currentSession!.email,
-        role: role,
-        permissions: UserPermissions.fromRole(role),
-        loginTime: state.currentSession!.loginTime,
-      ),
+      isAuthenticated: state.isAuthenticated,
+      profile: state.profile,
+      role: newRole,
+      permissions: UserPermissions.fromRole(newRole),
     );
   }
 }

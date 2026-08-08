@@ -24,7 +24,7 @@ class ElectrodeMapWidget extends StatelessWidget {
     return GlassCard(
       isDark: isDark,
       child: Column(
-        crossAxisAlignment: CrossAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -76,7 +76,7 @@ class ElectrodeMapWidget extends StatelessWidget {
                       width: 200,
                       height: 220,
                       decoration: BoxDecoration(
-                        shape: BoxShape.ellipse,
+                        borderRadius: const BorderRadius.all(Radius.elliptical(100, 110)),
                         border: Border.all(color: isDark ? const Color(0xFF334155) : const Color(0xFFCBD5E1), width: 2),
                       ),
                     ),

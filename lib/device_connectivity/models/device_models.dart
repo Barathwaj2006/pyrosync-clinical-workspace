@@ -1,16 +1,84 @@
 import 'dart:core';
 
-enum ProviderType { simulation, bluetooth, wifi, usb, replay }
+enum ProviderType { usbSerial, ble, bluetoothClassic, wifi, simulation, none }
 
 enum DeviceConnectionState {
-  disconnected,
+  noDevice,
   scanning,
+  devicesFound,
+  userSelectionRequired,
   connecting,
+  verifying,
   connected,
-  streaming,
-  paused,
+  disconnecting,
   error,
-  reconnecting,
+}
+
+enum HardwareTransportCategory {
+  ble,
+  bluetoothClassic,
+  usbSerial,
+  network,
+}
+
+class DiscoveredDevice {
+  final String id;
+  final String name;
+  final String portOrAddress;
+  final HardwareTransportCategory transportCategory;
+  final String description;
+  final int? rssiDbm;
+  final String? vidPid;
+  final String? manufacturer;
+  final bool isEegServiceDetected;
+  final bool isAvailable;
+  final String? statusNote;
+
+  DiscoveredDevice({
+    required this.id,
+    required this.name,
+    required this.portOrAddress,
+    required this.transportCategory,
+    required this.description,
+    this.rssiDbm,
+    this.vidPid,
+    this.manufacturer,
+    this.isEegServiceDetected = false,
+    this.isAvailable = true,
+    this.statusNote,
+  });
+}
+
+class HandshakeResult {
+  final bool success;
+  final DeviceInfo? deviceInfo;
+  final String errorMessage;
+  final bool isProtocolConfigured;
+
+  HandshakeResult({
+    required this.success,
+    this.deviceInfo,
+    required this.errorMessage,
+    this.isProtocolConfigured = true,
+  });
+
+  factory HandshakeResult.failed(String reason, {bool protocolConfigured = true}) {
+    return HandshakeResult(
+      success: false,
+      deviceInfo: null,
+      errorMessage: reason,
+      isProtocolConfigured: protocolConfigured,
+    );
+  }
+
+  factory HandshakeResult.verified(DeviceInfo info) {
+    return HandshakeResult(
+      success: true,
+      deviceInfo: info,
+      errorMessage: '',
+      isProtocolConfigured: true,
+    );
+  }
 }
 
 class DeviceInfo {
@@ -27,6 +95,7 @@ class DeviceInfo {
   final double temperatureCelsius;
   final Duration uptime;
   final ProviderType providerType;
+  final bool isSimulated;
 
   DeviceInfo({
     required this.deviceId,
@@ -42,6 +111,7 @@ class DeviceInfo {
     required this.temperatureCelsius,
     required this.uptime,
     required this.providerType,
+    this.isSimulated = false,
   });
 
   DeviceInfo copyWith({
@@ -49,6 +119,7 @@ class DeviceInfo {
     double? signalQualityScore,
     double? temperatureCelsius,
     Duration? uptime,
+    bool? isSimulated,
   }) {
     return DeviceInfo(
       deviceId: deviceId,
@@ -64,6 +135,7 @@ class DeviceInfo {
       temperatureCelsius: temperatureCelsius ?? this.temperatureCelsius,
       uptime: uptime ?? this.uptime,
       providerType: providerType,
+      isSimulated: isSimulated ?? this.isSimulated,
     );
   }
 }
@@ -90,4 +162,18 @@ class DeviceDiagnostics {
     required this.connectionQualityScore,
     required this.bufferSizeBytes,
   });
+
+  factory DeviceDiagnostics.empty() {
+    return DeviceDiagnostics(
+      framesReceived: 0,
+      packetsLost: 0,
+      latencyMs: 0.0,
+      droppedSamples: 0,
+      reconnectCount: 0,
+      communicationErrors: 0,
+      signalInterruptions: 0,
+      connectionQualityScore: 0.0,
+      bufferSizeBytes: 4096,
+    );
+  }
 }

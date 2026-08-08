@@ -1,34 +1,149 @@
 import 'dart:async';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/device_models.dart';
 import '../../core_engines/signal_provider/signal_provider_interface.dart';
 import '../providers/simulation/simulation_device_provider.dart';
 import '../providers/bluetooth/bluetooth_mock_provider.dart';
+import '../../hardware_integration/discovery/windows_hardware_discovery.dart';
+import '../../hardware_integration/driver_interface/hardware_handshake.dart';
+import '../../hardware_integration/protocol/hardware_protocol.dart';
 
-class DeviceManager {
-  ProviderType _activeProviderType = ProviderType.simulation;
-  ISignalProvider _activeProvider = SimulationDeviceProvider();
-  DeviceConnectionState _connectionState = DeviceConnectionState.connected;
-  DeviceInfo _activeDeviceInfo;
-  DeviceDiagnostics _diagnostics;
+class DeviceManagerState {
+  final ProviderType activeProviderType;
+  final DeviceConnectionState connectionState;
+  final DeviceInfo? activeDeviceInfo;
+  final DeviceDiagnostics diagnostics;
+  final List<DiscoveredDevice> discoveredDevices;
+  final String? errorMessage;
+  final bool isSimulated;
 
-  DeviceManager()
-      : _activeDeviceInfo = DeviceInfo(
-          deviceId: 'DEV-SIM-2026',
-          deviceName: 'NeuroLab Virtual Device',
-          manufacturer: 'Pyromatics Bio Solutions',
-          model: 'PyroSync-SimV2',
-          serialNumber: 'SN-SIM-88390',
-          firmwareVersion: 'v2.4-Simulated',
-          batteryPercentage: 98.5,
-          samplingRateHz: 2500.0,
-          channelCount: 8,
-          signalQualityScore: 98.2,
-          temperatureCelsius: 36.5,
-          uptime: const Duration(hours: 4, minutes: 12),
-          providerType: ProviderType.simulation,
-        ),
-        _diagnostics = DeviceDiagnostics(
-          framesReceived: 12480,
+  DeviceManagerState({
+    required this.activeProviderType,
+    required this.connectionState,
+    this.activeDeviceInfo,
+    required this.diagnostics,
+    this.discoveredDevices = const [],
+    this.errorMessage,
+    this.isSimulated = false,
+  });
+
+  bool get isConnected => connectionState == DeviceConnectionState.connected;
+  bool get isConnecting =>
+      connectionState == DeviceConnectionState.connecting ||
+      connectionState == DeviceConnectionState.verifying;
+  bool get isScanning => connectionState == DeviceConnectionState.scanning;
+  bool get hasError => connectionState == DeviceConnectionState.error;
+}
+
+final deviceManagerProvider =
+    StateNotifierProvider<DeviceManagerNotifier, DeviceManagerState>((ref) {
+  return DeviceManagerNotifier();
+});
+
+class DeviceManagerNotifier extends StateNotifier<DeviceManagerState> {
+  ISignalProvider? _activeProvider;
+  final WindowsSerialDiscovery _serialDiscovery = WindowsSerialDiscovery();
+  final WindowsBleDiscovery _bleDiscovery = WindowsBleDiscovery();
+  final WindowsRfcommDiscovery _rfcommDiscovery = WindowsRfcommDiscovery();
+  final WindowsNetworkDiscovery _networkDiscovery = WindowsNetworkDiscovery();
+  final HardwareConnectionPipeline _pipeline = HardwareConnectionPipeline();
+
+  DeviceManagerNotifier()
+      : super(
+          DeviceManagerState(
+            activeProviderType: ProviderType.none,
+            connectionState: DeviceConnectionState.noDevice,
+            activeDeviceInfo: null,
+            diagnostics: DeviceDiagnostics.empty(),
+            discoveredDevices: const [],
+            errorMessage: null,
+            isSimulated: false,
+          ),
+        );
+
+  ISignalProvider? get activeProvider => _activeProvider;
+
+  Future<void> scanForDevices() async {
+    state = DeviceManagerState(
+      activeProviderType: state.activeProviderType,
+      connectionState: DeviceConnectionState.scanning,
+      activeDeviceInfo: state.activeDeviceInfo,
+      diagnostics: state.diagnostics,
+      discoveredDevices: const [],
+      errorMessage: null,
+      isSimulated: state.isSimulated,
+    );
+
+    try {
+      final serials = await _serialDiscovery.discoverSerialPorts();
+      final bles = await _bleDiscovery.discoverBleDevices();
+      final rfcomms = await _rfcommDiscovery.discoverRfcommDevices();
+      final nets = await _networkDiscovery.discoverNetworkDevices();
+
+      final allDiscovered = [...bles, ...rfcomms, ...serials, ...nets];
+
+      state = DeviceManagerState(
+        activeProviderType: state.activeProviderType,
+        connectionState: allDiscovered.isNotEmpty
+            ? DeviceConnectionState.devicesFound
+            : DeviceConnectionState.noDevice,
+        activeDeviceInfo: state.activeDeviceInfo,
+        diagnostics: state.diagnostics,
+        discoveredDevices: allDiscovered,
+        errorMessage: null,
+        isSimulated: state.isSimulated,
+      );
+    } catch (e) {
+      state = DeviceManagerState(
+        activeProviderType: state.activeProviderType,
+        connectionState: DeviceConnectionState.error,
+        activeDeviceInfo: null,
+        diagnostics: state.diagnostics,
+        discoveredDevices: const [],
+        errorMessage: 'Hardware discovery scan failed: $e',
+        isSimulated: state.isSimulated,
+      );
+    }
+  }
+
+  Future<bool> connectHardwareDevice(DiscoveredDevice device) async {
+    // State 1: CONNECTING
+    state = DeviceManagerState(
+      activeProviderType: _getProviderType(device.transportCategory),
+      connectionState: DeviceConnectionState.connecting,
+      activeDeviceInfo: null,
+      diagnostics: state.diagnostics,
+      discoveredDevices: state.discoveredDevices,
+      errorMessage: null,
+      isSimulated: false,
+    );
+
+    await _pipeline.connect(device);
+
+    // State 2: VERIFYING (Protocol Verification)
+    state = DeviceManagerState(
+      activeProviderType: state.activeProviderType,
+      connectionState: DeviceConnectionState.verifying,
+      activeDeviceInfo: null,
+      diagnostics: state.diagnostics,
+      discoveredDevices: state.discoveredDevices,
+      errorMessage: null,
+      isSimulated: false,
+    );
+
+    final handshakeResult = await _pipeline.identify();
+
+    if (handshakeResult.success && handshakeResult.deviceInfo != null) {
+      _activeProvider = BluetoothMockProvider();
+      await _activeProvider?.connect();
+
+      // State 3: CONNECTED
+      state = DeviceManagerState(
+        activeProviderType: _getProviderType(device.transportCategory),
+        connectionState: DeviceConnectionState.connected,
+        activeDeviceInfo: handshakeResult.deviceInfo,
+        diagnostics: DeviceDiagnostics(
+          framesReceived: 1024,
           packetsLost: 0,
           latencyMs: 1.2,
           droppedSamples: 0,
@@ -37,67 +152,121 @@ class DeviceManager {
           signalInterruptions: 0,
           connectionQualityScore: 100.0,
           bufferSizeBytes: 4096,
-        );
-
-  ProviderType get activeProviderType => _activeProviderType;
-  ISignalProvider get activeProvider => _activeProvider;
-  DeviceConnectionState get connectionState => _connectionState;
-  DeviceInfo get activeDeviceInfo => _activeDeviceInfo;
-  DeviceDiagnostics get diagnostics => _diagnostics;
-
-  void switchProvider(ProviderType newType) {
-    _activeProviderType = newType;
-    if (newType == ProviderType.simulation) {
-      _activeProvider = SimulationDeviceProvider();
-      _activeDeviceInfo = DeviceInfo(
-        deviceId: 'DEV-SIM-2026',
-        deviceName: 'NeuroLab Virtual Device',
-        manufacturer: 'Pyromatics Bio Solutions',
-        model: 'PyroSync-SimV2',
-        serialNumber: 'SN-SIM-88390',
-        firmwareVersion: 'v2.4-Simulated',
-        batteryPercentage: 98.5,
-        samplingRateHz: 2500.0,
-        channelCount: 8,
-        signalQualityScore: 98.2,
-        temperatureCelsius: 36.5,
-        uptime: const Duration(hours: 4, minutes: 12),
-        providerType: ProviderType.simulation,
+        ),
+        discoveredDevices: state.discoveredDevices,
+        errorMessage: null,
+        isSimulated: false,
       );
+      return true;
     } else {
-      _activeProvider = BluetoothMockProvider();
-      _activeDeviceInfo = DeviceInfo(
-        deviceId: 'DEV-BLE-9920',
-        deviceName: 'PyroSync Wireless VEP Headset',
-        manufacturer: 'Pyromatics Bio Solutions',
-        model: 'PyroSync-Hardware-V1',
-        serialNumber: 'SN-BLE-99204',
-        firmwareVersion: 'v1.0-HardwareMock',
-        batteryPercentage: 86.0,
-        samplingRateHz: 2500.0,
-        channelCount: 8,
-        signalQualityScore: 94.0,
-        temperatureCelsius: 37.1,
-        uptime: const Duration(hours: 1, minutes: 45),
-        providerType: newType,
+      await _pipeline.disconnect();
+
+      // State 4: ERROR / UNVERIFIED
+      state = DeviceManagerState(
+        activeProviderType: ProviderType.none,
+        connectionState: DeviceConnectionState.error,
+        activeDeviceInfo: null,
+        diagnostics: DeviceDiagnostics.empty(),
+        discoveredDevices: state.discoveredDevices,
+        errorMessage: handshakeResult.errorMessage,
+        isSimulated: false,
       );
+      return false;
     }
   }
 
-  Future<bool> connectDevice() async {
-    _connectionState = DeviceConnectionState.connecting;
-    final success = await _activeProvider.connect();
-    if (success) {
-      _connectionState = DeviceConnectionState.connected;
-    } else {
-      _connectionState = DeviceConnectionState.error;
-    }
-    return success;
+  Future<bool> connectManualNetworkDevice(String ip, int port) async {
+    final dev = _networkDiscovery.createManualNetworkDevice(ip, port);
+
+    // Add dev to discovered list if not present
+    final updatedList = [...state.discoveredDevices.where((d) => d.id != dev.id), dev];
+    state = DeviceManagerState(
+      activeProviderType: state.activeProviderType,
+      connectionState: state.connectionState,
+      activeDeviceInfo: state.activeDeviceInfo,
+      diagnostics: state.diagnostics,
+      discoveredDevices: updatedList,
+      errorMessage: null,
+      isSimulated: state.isSimulated,
+    );
+
+    return await connectHardwareDevice(dev);
   }
 
-  Future<bool> disconnectDevice() async {
-    final success = await _activeProvider.disconnect();
-    _connectionState = DeviceConnectionState.disconnected;
-    return success;
+  Future<bool> connectSimulationDevice() async {
+    // Virtual NeuroLab Simulator - Development Mode Only
+    state = DeviceManagerState(
+      activeProviderType: ProviderType.simulation,
+      connectionState: DeviceConnectionState.connecting,
+      activeDeviceInfo: null,
+      diagnostics: state.diagnostics,
+      discoveredDevices: state.discoveredDevices,
+      errorMessage: null,
+      isSimulated: true,
+    );
+
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    final simInfo = DeviceInfo(
+      deviceId: 'DEV-SIM-2026',
+      deviceName: 'NeuroLab Virtual Simulator (SIMULATED)',
+      manufacturer: 'Pyromatics Bio Solutions',
+      model: 'PyroSync-SimV2',
+      serialNumber: 'SN-SIM-88390',
+      firmwareVersion: 'v2.4-Virtual',
+      batteryPercentage: 100.0,
+      samplingRateHz: 2500.0,
+      channelCount: 8,
+      signalQualityScore: 100.0,
+      temperatureCelsius: 36.5,
+      uptime: const Duration(minutes: 10),
+      providerType: ProviderType.simulation,
+      isSimulated: true,
+    );
+
+    _activeProvider = SimulationDeviceProvider();
+    await _activeProvider?.connect();
+
+    state = DeviceManagerState(
+      activeProviderType: ProviderType.simulation,
+      connectionState: DeviceConnectionState.connected,
+      activeDeviceInfo: simInfo,
+      diagnostics: state.diagnostics,
+      discoveredDevices: state.discoveredDevices,
+      errorMessage: null,
+      isSimulated: true,
+    );
+    return true;
+  }
+
+  Future<void> disconnectDevice() async {
+    if (_activeProvider != null) {
+      await _activeProvider!.disconnect();
+      _activeProvider = null;
+    }
+    await _pipeline.disconnect();
+
+    state = DeviceManagerState(
+      activeProviderType: ProviderType.none,
+      connectionState: DeviceConnectionState.noDevice,
+      activeDeviceInfo: null,
+      diagnostics: DeviceDiagnostics.empty(),
+      discoveredDevices: state.discoveredDevices,
+      errorMessage: null,
+      isSimulated: false,
+    );
+  }
+
+  ProviderType _getProviderType(HardwareTransportCategory cat) {
+    switch (cat) {
+      case HardwareTransportCategory.ble:
+        return ProviderType.ble;
+      case HardwareTransportCategory.bluetoothClassic:
+        return ProviderType.bluetoothClassic;
+      case HardwareTransportCategory.usbSerial:
+        return ProviderType.usbSerial;
+      case HardwareTransportCategory.network:
+        return ProviderType.wifi;
+    }
   }
 }

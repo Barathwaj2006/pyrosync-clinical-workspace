@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 import '../models/signal_models.dart';
 
 class ArtifactDetector {
