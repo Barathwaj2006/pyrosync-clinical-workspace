@@ -114,13 +114,13 @@ class WindowsBleDiscovery {
               formattedAddr = rawAddr.replaceAllMapped(RegExp(r'.{2}'), (match) => '${match.group(0)}:').substring(0, 17);
             }
 
-            // Check if Pokidex Nordic UART Service (6E400001) or EEG Service is exposed
-            final bool isPokidex = services.toLowerCase().contains('6e400001') || name.toLowerCase().contains('pokidex');
+            // Check if Pokidex BLE GATT Service (0000fe50) or EEG Service is exposed
+            final bool isPokidex = services.toLowerCase().contains('fe50') || name.toLowerCase().contains('pokidex');
             final bool isEeg = isPokidex || services.toLowerCase().contains('ffe0') || name.toLowerCase().contains('eeg') || name.toLowerCase().contains('bioamp');
 
             String note = 'Bluetooth device detected but not recognized as a compatible EEG acquisition device.';
             if (isPokidex) {
-              note = 'Pokidex Android EEG Stimulator (Nordic UART Service 6E400001 Detected)';
+              note = 'Pokidex Android EEG Stimulator (GATT Service 0000fe50 Detected)';
             } else if (isEeg) {
               note = 'GATT EEG Service Detected';
             }
@@ -132,7 +132,7 @@ class WindowsBleDiscovery {
                 portOrAddress: formattedAddr,
                 transportCategory: HardwareTransportCategory.ble,
                 description: isPokidex
-                    ? 'Pokidex Android BLE Peripheral (Nordic UART 6E400001) • RSSI: $rssi dBm'
+                    ? 'Pokidex Android BLE Peripheral (GATT 0000fe50 / FE51 Notify-Only) • RSSI: $rssi dBm'
                     : 'Bluetooth LE • RSSI: $rssi dBm',
                 rssiDbm: rssi,
                 isEegServiceDetected: isEeg,

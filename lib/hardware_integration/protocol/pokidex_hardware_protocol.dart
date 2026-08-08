@@ -14,9 +14,9 @@ class PokidexHardwareProtocol implements HardwareProtocol {
   @override
   Future<HandshakeResult> identify(IHardwareTransport transport, DiscoveredDevice device) async {
     if (device.transportCategory == HardwareTransportCategory.ble) {
-      if (!device.description.contains('6E400001') && !device.name.toLowerCase().contains('pokidex')) {
+      if (!device.description.contains('fe50') && !device.description.contains('0000fe50') && !device.name.toLowerCase().contains('pokidex')) {
         return HandshakeResult.failed(
-          'Bluetooth device detected but not recognized as Pokidex Android EEG Stimulator (Nordic UART Service missing).',
+          'Bluetooth device detected but not recognized as Pokidex Android EEG Stimulator (GATT Service 0000fe50 missing).',
         );
       }
     } else if (device.transportCategory == HardwareTransportCategory.network) {

@@ -826,7 +826,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
           ),
           const SizedBox(height: 4),
           const Text(
-            'Streams real-time JSON SignalFrames concurrently over Wi-Fi (WebSocket ws://<IP>:8765) and Bluetooth LE (Nordic UART Service 6E400001).',
+            'Streams real-time JSON SignalFrames concurrently over Wi-Fi (WebSocket ws://<IP>:8765) and Bluetooth LE (Service 0000fe50, Notify 0000fe51).',
             style: TextStyle(color: Color(0xFF94A3B8), fontSize: 11),
           ),
           const SizedBox(height: 12),
@@ -869,7 +869,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
             children: [
               Expanded(
                 child: Text(
-                  '2. Bluetooth LE (Nordic UART): ${isBleConnected ? "CONNECTED" : "DISCONNECTED"}',
+                  '2. Bluetooth LE (FE50/FE51 Notify): ${isBleConnected ? "CONNECTED" : "DISCONNECTED"}',
                   style: TextStyle(
                     color: isBleConnected ? PyroColors.statusSuccess : Colors.white,
                     fontWeight: FontWeight.w600,
@@ -890,7 +890,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                     deviceNotifier.connectPokidexBle('00:1A:7D:DA:71:13');
                   }
                 },
-                child: Text(isBleConnected ? 'Disconnect BLE' : 'Connect BLE (Nordic 6E400001)'),
+                child: Text(isBleConnected ? 'Disconnect BLE' : 'Connect BLE (FE50/FE51)'),
               ),
             ],
           ),
@@ -907,7 +907,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: _buildTransportStatsCard('Bluetooth LE (Nordic UART)', mgr.bleStats, const Color(0xFFA855F7)),
+                child: _buildTransportStatsCard('Bluetooth LE (FE51 Notify)', mgr.bleStats, const Color(0xFFA855F7)),
               ),
             ],
           ),
