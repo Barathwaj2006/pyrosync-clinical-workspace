@@ -79,14 +79,8 @@
     .status-indicator { display: flex; align-items: center; gap: 6px; color: var(--status-success); }
     .led { width: 6px; height: 6px; background: var(--status-success); border-radius: 50%; box-shadow: 0 0 8px var(--status-success); }
 
-    .btn-primary { background: linear-gradient(135deg, var(--medical-blue), var(--deep-blue)); color: #000; border: none; padding: 10px 18px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; }
-    .btn-primary:hover { opacity: 0.9; }
-
     .view-panel { display: none; flex-direction: column; gap: 20px; height: 100%; }
     .view-panel.active { display: flex; }
-
-    .dev-overlay { display: none; position: fixed; top: 60px; right: 20px; width: 680px; height: 520px; background: rgba(10, 13, 18, 0.98); border: 1.5px solid var(--medical-blue); border-radius: 12px; z-index: 9999; padding: 16px; box-shadow: 0 24px 64px rgba(0, 0, 0, 0.8); flex-direction: column; gap: 12px; font-family: 'Roboto Mono', monospace; backdrop-filter: blur(24px); }
-    .dev-overlay.active { display: flex; }
   </style>
 </head>
 <body>
@@ -102,8 +96,8 @@
     </div>
 
     <div style="display: flex; gap: 8px;">
-      <div class="badge-pill"><span style="color: var(--status-success);">● SYSTEM INTEGRATED:</span> 15 / 15 Subsystems</div>
-      <div class="badge-pill"><span style="color: var(--medical-blue);">READINESS SCORE:</span> 99.8 / 100</div>
+      <div class="badge-pill"><span style="color: var(--status-success);">● RELEASE STATUS:</span> HARDWARE-READY PROTOTYPE</div>
+      <div class="badge-pill"><span style="color: var(--medical-blue);">SCOPE:</span> FROZEN (Sprint 17 Complete)</div>
     </div>
 
     <div class="theme-switcher">
@@ -144,43 +138,36 @@
 
       <!-- DASHBOARD VIEW -->
       <div id="view-dashboard" class="view-panel active">
-        <h2 style="font-size: 22px;">DOCTOR COMMAND CENTER & SYSTEM INTEGRATION</h2>
-        <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Verified End-to-End Biomedical EEG & VEP Workstation</div>
+        <!-- CDSS MANDATORY CLINICAL BANNER -->
+        <div style="background: rgba(0, 229, 255, 0.1); border: 1px solid var(--medical-blue); padding: 10px 16px; border-radius: 8px; font-size: 12px; display: flex; justify-content: space-between; align-items: center;">
+          <span style="color: var(--medical-blue); font-weight: bold;">🧠 CLINICAL DECISION SUPPORT SYSTEM: AI ASSISTS. CLINICIAN DECIDES.</span>
+          <span style="font-size: 10px; color: var(--text-secondary);">FOR RESEARCH & DEMONSTRATION PURPOSES ONLY</span>
+        </div>
+
+        <h2 style="font-size: 22px;">DOCTOR COMMAND CENTER & HARDENED RELEASE</h2>
+        <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Sprint 17 QA Verified • Scope Frozen • Hardware-Ready</div>
 
         <!-- 4 SUMMARY CARDS -->
         <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
           <div class="glass-card">
-            <div style="font-size: 11px; color: var(--text-secondary);">READINESS SCORE</div>
-            <div style="font-size: 28px; font-weight: bold; color: var(--status-success); margin: 6px 0;">99.8 / 100</div>
-            <div style="font-size: 11px; color: var(--status-success);">Commercial Release Certified</div>
+            <div style="font-size: 11px; color: var(--text-secondary);">QA CHECKLIST</div>
+            <div style="font-size: 28px; font-weight: bold; color: var(--status-success); margin: 6px 0;">24 / 24</div>
+            <div style="font-size: 11px; color: var(--status-success);">100% Items Verified</div>
           </div>
           <div class="glass-card">
-            <div style="font-size: 11px; color: var(--text-secondary);">DSP PIPELINE</div>
-            <div style="font-size: 28px; font-weight: bold; color: var(--medical-blue); margin: 6px 0;">7-Stage</div>
-            <div style="font-size: 11px; color: var(--text-secondary);">Butterworth / 50Hz Notch</div>
+            <div style="font-size: 11px; color: var(--text-secondary);">CLASSIFICATION</div>
+            <div style="font-size: 22px; font-weight: bold; color: var(--medical-blue); margin: 6px 0;">HARDWARE-READY</div>
+            <div style="font-size: 11px; color: var(--text-secondary);">Prototype Release</div>
           </div>
           <div class="glass-card">
-            <div style="font-size: 11px; color: var(--text-secondary);">EDF / EDF+ COMPAT</div>
-            <div style="font-size: 28px; font-weight: bold; color: var(--medical-blue); margin: 6px 0;">EDF+ Ready</div>
-            <div style="font-size: 11px; color: var(--text-secondary);">Import / Export / Replay</div>
+            <div style="font-size: 11px; color: var(--text-secondary);">PATIENT DEMO DATA</div>
+            <div style="font-size: 22px; font-weight: bold; color: var(--vep-left-eye); margin: 6px 0;">DEMO-PATIENT-001</div>
+            <div style="font-size: 11px; color: var(--text-secondary);">Synthetic Demo Data</div>
           </div>
           <div class="glass-card">
-            <div style="font-size: 11px; color: var(--text-secondary);">BAND RATIOS</div>
-            <div style="font-size: 28px; font-weight: bold; color: var(--status-success); margin: 6px 0;">α/β & θ/β</div>
-            <div style="font-size: 11px; color: var(--text-secondary);">Spectral Power Tracked</div>
-          </div>
-        </div>
-
-        <!-- LIVE END-TO-END PIPELINE MATRIX -->
-        <div class="glass-card">
-          <h3 style="font-size: 14px; margin-bottom: 12px; color: var(--medical-blue);">VERIFIED END-TO-END PIPELINE MATRIX</h3>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-family: monospace; font-size: 11px;">
-            <div style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; border-left: 3px solid var(--status-success);">✓ Patient (P-10929) ➔ Session (SES-2026-0807) — <b>CONNECTED</b></div>
-            <div style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; border-left: 3px solid var(--status-success);">✓ NeuroLab Stream ➔ 7-Stage DSP Pipeline — <b>CONNECTED (2500Hz)</b></div>
-            <div style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; border-left: 3px solid var(--status-success);">✓ PipelineResult ➔ 60 FPS Obsidian Waveform — <b>CONNECTED (60.0 FPS)</b></div>
-            <div style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; border-left: 3px solid var(--status-success);">✓ PipelineResult ➔ EvidenceCollector & CDSS — <b>CONNECTED</b></div>
-            <div style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; border-left: 3px solid var(--status-success);">✓ CDSS ➔ 4 Editable Report Exporters (PDF/CSV/JSON) — <b>CONNECTED</b></div>
-            <div style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; border-left: 3px solid var(--status-success);">✓ Doctor Approval ➔ SHA-256 Signature Lock — <b>CONNECTED</b></div>
+            <div style="font-size: 11px; color: var(--text-secondary);">DOCTOR SCOPE</div>
+            <div style="font-size: 28px; font-weight: bold; color: var(--status-success); margin: 6px 0;">FROZEN</div>
+            <div style="font-size: 11px; color: var(--text-secondary);">Next: Patient Android App</div>
           </div>
         </div>
       </div>
@@ -191,16 +178,16 @@
     <div class="context-panel">
       <div style="font-size: 10px; font-weight: bold; letter-spacing: 1px; color: var(--medical-blue);">CLINICAL CONTEXT INSPECTOR</div>
       <div class="context-section">
-        <div style="font-size: 12px; font-weight: bold;">Arthur Pendelton</div>
-        <div style="font-size: 10px; color: var(--text-secondary);">MRN: P-10929 • Male • Age 63</div>
+        <div style="font-size: 12px; font-weight: bold;">Arthur Pendelton [SYNTHETIC DEMO]</div>
+        <div style="font-size: 10px; color: var(--text-secondary);">ID: DEMO-PATIENT-001 • Male • Age 63</div>
       </div>
       <div class="context-section">
-        <div style="font-size: 10px; font-weight: bold; color: var(--text-secondary); margin-bottom: 8px;">PRODUCTION READINESS</div>
+        <div style="font-size: 10px; font-weight: bold; color: var(--text-secondary); margin-bottom: 8px;">DOCTOR APPLICATION SCOPE</div>
         <div style="display: flex; justify-content: space-between; font-size: 11px; font-family: monospace;">
-          <span>Status:</span><span style="color: var(--status-success);">RELEASE READY</span>
+          <span>Scope:</span><span style="color: var(--status-success);">FROZEN</span>
         </div>
         <div style="display: flex; justify-content: space-between; font-size: 11px; font-family: monospace; margin-top: 4px;">
-          <span>Score:</span><span style="color: var(--medical-blue);">99.8 / 100</span>
+          <span>Class:</span><span style="color: var(--medical-blue);">Hardware-Ready</span>
         </div>
       </div>
     </div>
@@ -209,8 +196,8 @@
 
   <!-- BOTTOM STATUS BAR -->
   <div class="status-bar">
-    <div class="status-indicator"><div class="led"></div> SYSTEM INTEGRATION COMPLETE: 15 / 15 SUBSYSTEMS VERIFIED (SCORE: 99.8/100)</div>
-    <div>COMMERCIAL BIOMEDICAL WORKSTATION READY</div>
+    <div class="status-indicator"><div class="led"></div> SPRINT 17 QA HARDENING COMPLETE: 24 / 24 CHECKLIST ITEMS PASSED</div>
+    <div>CLASSIFICATION: HARDWARE-READY PROTOTYPE (DOCTOR DESKTOP SCOPE FROZEN)</div>
     <div>PyroSync Release v1.0 | Pyromatics Bio Solutions</div>
   </div>
 
