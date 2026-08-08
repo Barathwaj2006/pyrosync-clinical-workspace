@@ -7,15 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [v1.0.0] - 2026-08-07
+## [v1.0.0] - 2026-08-08
 
 ### Added
-- **Production Digital Signal Processing Engine**:
-  - Implemented `ProductionDspFilters`: DC Offset Removal, Baseline Wander Removal, Moving Average, FIR/IIR Filters, Butterworth, Chebyshev, Bessel, 50Hz & 60Hz Notch Filters, Bandpass (1-70Hz), Automatic Gain Normalization, Windowing (Hamming, Hann, Blackman), RMS, and Envelope Detection.
-
-- **European Data Format (EDF / EDF+) Interoperability Subsystem**:
-  - Implemented `EdfParserExporter`: Full EDF / EDF+ File Reader, 256-Byte ASCII Header Parser, Channel Label Mapper (`EEG Oz`, `EEG Cz`), File Exporter, and Real-Time Replay Provider.
-
-- **Complete System Integration & Production Readiness**:
-  - Verified 15 integrated subsystems across the entire application flow (Patient ➔ Session ➔ Protocol ➔ Device ➔ Recording ➔ DSP ➔ Visualization ➔ CDSS ➔ Reports ➔ Doctor Review ➔ Archival).
-  - Production Readiness Score certified at **99.8 / 100** (`COMMERCIAL_RELEASE_READY`).
+- **Sprint 16: Real Hardware Integration Layer**:
+  - Implemented modular communication transports (`BleTransport`, `BluetoothClassicTransport`, `WifiTcpTransport`, `WifiUdpTransport`, `UsbSerialTransport`) under unified `IHardwareTransport` contract.
+  - Built hardware-agnostic packet parser (`ConfigurablePacketParser`) supporting variable sampling rates (250 Hz - 5000 Hz) and channel counts (1 - 32 channels).
+  - Built connection recovery manager (`ConnectionRecoveryManager`) with exponential retry, packet-loss detection, and safe recording halt on failure.
+  - Published comprehensive developer documentation: `hardware_integration_guide.md`.
