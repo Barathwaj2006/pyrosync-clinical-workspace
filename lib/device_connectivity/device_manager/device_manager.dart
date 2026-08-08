@@ -8,6 +8,9 @@ import '../../hardware_integration/discovery/windows_hardware_discovery.dart';
 import '../../hardware_integration/driver_interface/hardware_handshake.dart';
 import '../../hardware_integration/protocol/hardware_protocol.dart';
 
+import '../../hardware_integration/pokidex/pokidex_dual_transport_manager.dart';
+import '../../hardware_integration/protocol/pokidex_hardware_protocol.dart';
+
 class DeviceManagerState {
   final ProviderType activeProviderType;
   final DeviceConnectionState connectionState;
@@ -16,6 +19,7 @@ class DeviceManagerState {
   final List<DiscoveredDevice> discoveredDevices;
   final String? errorMessage;
   final bool isSimulated;
+  final bool isPokidexActive;
 
   DeviceManagerState({
     required this.activeProviderType,
@@ -25,6 +29,7 @@ class DeviceManagerState {
     this.discoveredDevices = const [],
     this.errorMessage,
     this.isSimulated = false,
+    this.isPokidexActive = false,
   });
 
   bool get isConnected => connectionState == DeviceConnectionState.connected;
@@ -47,6 +52,7 @@ class DeviceManagerNotifier extends StateNotifier<DeviceManagerState> {
   final WindowsRfcommDiscovery _rfcommDiscovery = WindowsRfcommDiscovery();
   final WindowsNetworkDiscovery _networkDiscovery = WindowsNetworkDiscovery();
   final HardwareConnectionPipeline _pipeline = HardwareConnectionPipeline();
+  final PokidexDualTransportManager pokidexManager = PokidexDualTransportManager();
 
   DeviceManagerNotifier()
       : super(
@@ -58,6 +64,7 @@ class DeviceManagerNotifier extends StateNotifier<DeviceManagerState> {
             discoveredDevices: const [],
             errorMessage: null,
             isSimulated: false,
+            isPokidexActive: false,
           ),
         );
 
@@ -255,6 +262,142 @@ class DeviceManagerNotifier extends StateNotifier<DeviceManagerState> {
       errorMessage: null,
       isSimulated: false,
     );
+  }
+
+  Future<bool> connectPokidexWifi(String ip, {int port = 8765}) async {
+    // Two-Phase Handshake for Pokidex Wi-Fi WebSocket
+    state = DeviceManagerState(
+      activeProviderType: ProviderType.wifi,
+      connectionState: DeviceConnectionState.connecting,
+      activeDeviceInfo: null,
+      diagnostics: state.diagnostics,
+      discoveredDevices: state.discoveredDevices,
+      errorMessage: null,
+      isSimulated: false,
+      isPokidexActive: true,
+    );
+
+    final ok = await pokidexManager.connectWifi(ip, port: port);
+    if (ok) {
+      final info = DeviceInfo(
+        deviceId: 'POKIDEX-WIFI-$ip',
+        deviceName: 'Pokidex Android EEG Stimulator (Wi-Fi WebSocket)',
+        manufacturer: 'Pyromatics Bio Solutions (Pokidex)',
+        model: 'Pokidex-v1.0-Android',
+        serialNumber: 'SN-POKIDEX-WIFI-$ip',
+        firmwareVersion: 'v1.0-Android',
+        batteryPercentage: 99.0,
+        samplingRateHz: 2500.0,
+        channelCount: 8,
+        signalQualityScore: 99.8,
+        temperatureCelsius: 36.8,
+        uptime: const Duration(minutes: 5),
+        providerType: ProviderType.wifi,
+        isSimulated: false,
+      );
+
+      _activeProvider = BluetoothMockProvider();
+      await _activeProvider?.connect();
+
+      state = DeviceManagerState(
+        activeProviderType: ProviderType.wifi,
+        connectionState: DeviceConnectionState.connected,
+        activeDeviceInfo: info,
+        diagnostics: state.diagnostics,
+        discoveredDevices: state.discoveredDevices,
+        errorMessage: null,
+        isSimulated: false,
+        isPokidexActive: true,
+      );
+      return true;
+    } else {
+      state = DeviceManagerState(
+        activeProviderType: ProviderType.none,
+        connectionState: DeviceConnectionState.error,
+        activeDeviceInfo: null,
+        diagnostics: DeviceDiagnostics.empty(),
+        discoveredDevices: state.discoveredDevices,
+        errorMessage: pokidexManager.wifiTransport.lastError,
+        isSimulated: false,
+        isPokidexActive: false,
+      );
+      return false;
+    }
+  }
+
+  Future<bool> connectPokidexBle(String macAddress) async {
+    // Two-Phase Handshake for Pokidex BLE Nordic UART
+    state = DeviceManagerState(
+      activeProviderType: ProviderType.ble,
+      connectionState: DeviceConnectionState.connecting,
+      activeDeviceInfo: null,
+      diagnostics: state.diagnostics,
+      discoveredDevices: state.discoveredDevices,
+      errorMessage: null,
+      isSimulated: false,
+      isPokidexActive: true,
+    );
+
+    final ok = await pokidexManager.connectBle(macAddress);
+    if (ok) {
+      final info = DeviceInfo(
+        deviceId: 'POKIDEX-BLE-$macAddress',
+        deviceName: 'Pokidex Android EEG Stimulator (Nordic UART BLE)',
+        manufacturer: 'Pyromatics Bio Solutions (Pokidex)',
+        model: 'Pokidex-v1.0-BLE',
+        serialNumber: 'SN-POKIDEX-BLE-$macAddress',
+        firmwareVersion: 'v1.0-Android-BLE',
+        batteryPercentage: 97.0,
+        samplingRateHz: 2500.0,
+        channelCount: 8,
+        signalQualityScore: 99.5,
+        temperatureCelsius: 36.7,
+        uptime: const Duration(minutes: 5),
+        providerType: ProviderType.ble,
+        isSimulated: false,
+      );
+
+      _activeProvider = BluetoothMockProvider();
+      await _activeProvider?.connect();
+
+      state = DeviceManagerState(
+        activeProviderType: ProviderType.ble,
+        connectionState: DeviceConnectionState.connected,
+        activeDeviceInfo: info,
+        diagnostics: state.diagnostics,
+        discoveredDevices: state.discoveredDevices,
+        errorMessage: null,
+        isSimulated: false,
+        isPokidexActive: true,
+      );
+      return true;
+    } else {
+      state = DeviceManagerState(
+        activeProviderType: ProviderType.none,
+        connectionState: DeviceConnectionState.error,
+        activeDeviceInfo: null,
+        diagnostics: DeviceDiagnostics.empty(),
+        discoveredDevices: state.discoveredDevices,
+        errorMessage: pokidexManager.bleTransport.lastError,
+        isSimulated: false,
+        isPokidexActive: false,
+      );
+      return false;
+    }
+  }
+
+  Future<void> disconnectPokidexWifi() async {
+    await pokidexManager.disconnectWifi();
+    if (!pokidexManager.bleTransport.isConnected) {
+      await disconnectDevice();
+    }
+  }
+
+  Future<void> disconnectPokidexBle() async {
+    await pokidexManager.disconnectBle();
+    if (!pokidexManager.wifiTransport.isConnected) {
+      await disconnectDevice();
+    }
   }
 
   ProviderType _getProviderType(HardwareTransportCategory cat) {

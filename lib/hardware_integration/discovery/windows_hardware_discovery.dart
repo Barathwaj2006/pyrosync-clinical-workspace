@@ -114,22 +114,30 @@ class WindowsBleDiscovery {
               formattedAddr = rawAddr.replaceAllMapped(RegExp(r'.{2}'), (match) => '${match.group(0)}:').substring(0, 17);
             }
 
-            // Check if configured EEG Service UUID is exposed (e.g. 0000ffe0-0000-1000-8000-00805f9b34fb)
-            final bool isEeg = services.toLowerCase().contains('ffe0') || name.toLowerCase().contains('eeg') || name.toLowerCase().contains('bioamp');
+            // Check if Pokidex Nordic UART Service (6E400001) or EEG Service is exposed
+            final bool isPokidex = services.toLowerCase().contains('6e400001') || name.toLowerCase().contains('pokidex');
+            final bool isEeg = isPokidex || services.toLowerCase().contains('ffe0') || name.toLowerCase().contains('eeg') || name.toLowerCase().contains('bioamp');
+
+            String note = 'Bluetooth device detected but not recognized as a compatible EEG acquisition device.';
+            if (isPokidex) {
+              note = 'Pokidex Android EEG Stimulator (Nordic UART Service 6E400001 Detected)';
+            } else if (isEeg) {
+              note = 'GATT EEG Service Detected';
+            }
 
             bleDevices.add(
               DiscoveredDevice(
-                id: 'BLE-DEV-$formattedAddr',
-                name: name,
+                id: isPokidex ? 'BLE-POKIDEX-$formattedAddr' : 'BLE-DEV-$formattedAddr',
+                name: isPokidex && !name.contains('Pokidex') ? 'Pokidex EEG Stimulator ($name)' : name,
                 portOrAddress: formattedAddr,
                 transportCategory: HardwareTransportCategory.ble,
-                description: 'Bluetooth LE • RSSI: $rssi dBm',
+                description: isPokidex
+                    ? 'Pokidex Android BLE Peripheral (Nordic UART 6E400001) • RSSI: $rssi dBm'
+                    : 'Bluetooth LE • RSSI: $rssi dBm',
                 rssiDbm: rssi,
                 isEegServiceDetected: isEeg,
                 isAvailable: true,
-                statusNote: isEeg
-                    ? 'GATT EEG Service Detected'
-                    : 'Bluetooth device detected but not recognized as a compatible EEG acquisition device.',
+                statusNote: note,
               ),
             );
           }

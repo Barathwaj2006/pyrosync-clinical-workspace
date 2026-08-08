@@ -27,10 +27,11 @@
 
 ### 📡 1. Real Windows Native Hardware Connectivity Stack
 Direct integration with the Windows desktop hardware layer without third-party middleware or fake mock objects:
-- **Bluetooth Low Energy (BLE)**: Uses Windows WinRT `BluetoothLEAdvertisementWatcher` to discover nearby BLE devices, parsing MAC addresses, RSSI (dBm), and verifying GATT EEG Service UUIDs (`0000ffe0-0000-1000-8000-00805f9b34fb`).
+- **Bluetooth Low Energy (BLE)**: Uses Windows WinRT `BluetoothLEAdvertisementWatcher` to discover nearby BLE devices, parsing MAC addresses, RSSI (dBm), and verifying GATT EEG Service UUIDs (`0000ffe0-0000-1000-8000-00805f9b34fb`) as well as Pokidex Nordic UART Service (`6E400001-B5A3-F393-E0A9-E50E24DCCA9E`).
 - **Bluetooth Classic (RFCOMM)**: Queries Windows Serial Port Profile (SPP) paired devices via WMI (`Win32_PnPEntity`).
 - **USB / Serial Ports**: Enumerates real Windows system serial ports via WMI (`Win32_PnPEntity`), extracting COM number, Windows Device Name, USB `VID:PID` (e.g. `VID: 0403, PID: 6001`), and Manufacturer.
 - **Wi-Fi / Ethernet Network**: UDP broadcast subnet discovery (`255.255.255.255:8888`) plus manual IP/Port endpoint configuration (`192.168.1.42:5000`) with connection testing.
+- **📱 Pokidex Android EEG Stimulator Dual-Transport**: Connects to Pokidex concurrently over both **Wi-Fi WebSocket (`ws://<IP>:8765`)** and **BLE Nordic UART Service (`6E400001`)**. Streams JSON `SignalFrame` datagrams (metadata, sequence, timestamps, channel samples, VEP onset triggers) into the DSP pipeline while recording side-by-side latency & jitter research comparison logs.
 
 ### 🔒 2. Truthful Data Integrity & Zero Fabrication Contract
 - **Clean Startup State**: The application defaults strictly to **`NO DEVICE`** (`DeviceConnectionState.noDevice`). Zero automatic connections on launch.

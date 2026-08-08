@@ -8,6 +8,7 @@ import '../../core_engines/auth/auth_engine.dart';
 import '../../core_engines/theme/theme_engine_controller.dart';
 import '../../device_connectivity/device_manager/device_manager.dart';
 import '../../device_connectivity/models/device_models.dart';
+import '../../hardware_integration/pokidex/pokidex_dual_transport_manager.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -331,6 +332,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                         const Text('Network / Wi-Fi Biosignal Nodes:', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 12)),
                         const SizedBox(height: 6),
                         _buildNetworkNodeList(context, deviceState, deviceNotifier),
+
+                        const SizedBox(height: 24),
+
+                        const Text('POKIDEX ANDROID EEG STIMULATOR (DUAL TRANSPORT RESEARCH)', style: TextStyle(color: PyroColors.medicalBlue, fontWeight: FontWeight.bold, fontSize: 12)),
+                        const SizedBox(height: 12),
+                        _buildPokidexSection(context, deviceState, deviceNotifier),
 
                         const SizedBox(height: 24),
 
@@ -795,6 +802,139 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildPokidexSection(BuildContext context, DeviceManagerState deviceState, DeviceManagerNotifier deviceNotifier) {
+    final mgr = deviceNotifier.pokidexManager;
+    final isWifiConnected = mgr.wifiTransport.isConnected;
+    final isBleConnected = mgr.bleTransport.isConnected;
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFF121620),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: PyroColors.medicalBlue.withOpacity(0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Pokidex Android EEG Stimulator — Concurrent Research Transports',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            'Streams real-time JSON SignalFrames concurrently over Wi-Fi (WebSocket ws://<IP>:8765) and Bluetooth LE (Nordic UART Service 6E400001).',
+            style: TextStyle(color: Color(0xFF94A3B8), fontSize: 11),
+          ),
+          const SizedBox(height: 12),
+
+          // Wi-Fi Controls
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  '1. Wi-Fi WebSocket: ${isWifiConnected ? "CONNECTED" : "DISCONNECTED"}',
+                  style: TextStyle(
+                    color: isWifiConnected ? PyroColors.statusSuccess : Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isWifiConnected ? PyroColors.statusDanger : PyroColors.medicalBlue,
+                  foregroundColor: isWifiConnected ? Colors.white : Colors.black,
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                ),
+                onPressed: () {
+                  if (isWifiConnected) {
+                    deviceNotifier.disconnectPokidexWifi();
+                  } else {
+                    final ip = _ipController.text.trim();
+                    deviceNotifier.connectPokidexWifi(ip.isNotEmpty ? ip : '192.168.1.42', port: 8765);
+                  }
+                },
+                child: Text(isWifiConnected ? 'Disconnect Wi-Fi' : 'Connect Wi-Fi (ws://:8765)'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+
+          // BLE Controls
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  '2. Bluetooth LE (Nordic UART): ${isBleConnected ? "CONNECTED" : "DISCONNECTED"}',
+                  style: TextStyle(
+                    color: isBleConnected ? PyroColors.statusSuccess : Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isBleConnected ? PyroColors.statusDanger : PyroColors.medicalBlue,
+                  foregroundColor: isBleConnected ? Colors.white : Colors.black,
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                ),
+                onPressed: () {
+                  if (isBleConnected) {
+                    deviceNotifier.disconnectPokidexBle();
+                  } else {
+                    deviceNotifier.connectPokidexBle('00:1A:7D:DA:71:13');
+                  }
+                },
+                child: Text(isBleConnected ? 'Disconnect BLE' : 'Connect BLE (Nordic 6E400001)'),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+          const Text('CONCURRENT RESEARCH METRICS & LATENCY COMPARISON:', style: TextStyle(color: PyroColors.medicalBlue, fontWeight: FontWeight.bold, fontSize: 11)),
+          const SizedBox(height: 8),
+
+          // Side-by-Side Comparison Metrics Table
+          Row(
+            children: [
+              Expanded(
+                child: _buildTransportStatsCard('Wi-Fi (WebSocket)', mgr.wifiStats, PyroColors.medicalBlue),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildTransportStatsCard('Bluetooth LE (Nordic UART)', mgr.bleStats, const Color(0xFFA855F7)),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTransportStatsCard(String title, TransportStats stats, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0F172A),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: color.withOpacity(0.4)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 11)),
+          const SizedBox(height: 6),
+          Text('Frames Rx: ${stats.framesReceived}', style: const TextStyle(color: Colors.white, fontSize: 11)),
+          Text('Jitter: ${stats.jitterMs.toStringAsFixed(2)} ms', style: const TextStyle(color: Colors.white, fontSize: 11)),
+          Text('Dropped Sequences: ${stats.droppedSequenceFrames}', style: const TextStyle(color: Colors.white, fontSize: 11)),
+          Text('Connection Events: ${stats.connectionEventsCount}', style: const TextStyle(color: Colors.white, fontSize: 11)),
+        ],
+      ),
     );
   }
 }
