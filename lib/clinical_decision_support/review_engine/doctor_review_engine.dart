@@ -40,7 +40,6 @@ class DoctorReviewEngine {
       approvalTimestamp: DateTime.now(),
     );
 
-    // Generate cryptographic SHA-256 digital signature hash for FDA audit compliance
     final signatureData = '${draftReport.id}_${doctorReview.doctorId}_${approvedReview.approvalTimestamp?.toIso8601String()}';
     final signatureHash = 'SIG-SHA256-${signatureData.hashCode.abs().toRadixString(16).toUpperCase()}';
 

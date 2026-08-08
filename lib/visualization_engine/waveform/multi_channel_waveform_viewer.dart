@@ -34,7 +34,7 @@ class MultiChannelWaveformViewer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFF05070A), // Solid Obsidian Canvas (Zero Glare Rule)
+      color: const Color(0xFF05070A),
       child: CustomPaint(
         painter: WaveformPainter(
           channels: channels,
@@ -70,7 +70,6 @@ class WaveformPainter extends CustomPainter {
       ..color = const Color(0xFF1E293B)
       ..strokeWidth = 0.5;
 
-    // Draw background 10ms / 10uV grid lines
     const gridSpacing = 30.0;
     for (double x = 0; x < size.width; x += gridSpacing) {
       canvas.drawLine(Offset(x, 0), Offset(x, size.height), gridPaint);
@@ -84,7 +83,6 @@ class WaveformPainter extends CustomPainter {
       final config = activeChannels[i];
       final centerY = (i + 0.5) * channelHeight;
 
-      // Draw channel baseline
       canvas.drawLine(
         Offset(0, centerY),
         Offset(size.width, centerY),
@@ -106,7 +104,6 @@ class WaveformPainter extends CustomPainter {
             path.lineTo(x, y);
           }
         }
-        // Draw Raw Signal in translucent grey/cyan
         canvas.drawPath(
           path,
           Paint()
@@ -128,7 +125,6 @@ class WaveformPainter extends CustomPainter {
             path.lineTo(x, y);
           }
         }
-        // Draw Clean Filtered Signal in vibrant color
         canvas.drawPath(
           path,
           Paint()
@@ -139,7 +135,6 @@ class WaveformPainter extends CustomPainter {
       }
     }
 
-    // Draw Dual Cursors (A & B) if active
     if (activeMeasurement != null) {
       final cursorAPaint = Paint()
         ..color = const Color(0xFFFFB300)

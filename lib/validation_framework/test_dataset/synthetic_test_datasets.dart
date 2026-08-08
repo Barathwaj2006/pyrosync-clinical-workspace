@@ -34,7 +34,7 @@ class SyntheticValidationDataset {
 
   static SyntheticValidationDataset generate(ValidationDatasetType type) {
     const double fs = 2500.0;
-    const int count = 625; // 250ms epoch @ 2500Hz
+    const int count = 625;
     final samples = <double>[];
     final rand = Random(42);
 
@@ -44,7 +44,7 @@ class SyntheticValidationDataset {
           final tMs = (i / fs) * 1000.0;
           double val = 0.0;
           if (tMs >= 70 && tMs <= 85) val -= 5.0 * sin((tMs - 70) / 15.0 * pi);
-          if (tMs >= 95 && tMs <= 115) val += 12.0 * sin((tMs - 95) / 20.0 * pi); // P100 @ 102.4ms
+          if (tMs >= 95 && tMs <= 115) val += 12.0 * sin((tMs - 95) / 20.0 * pi);
           if (tMs >= 135 && tMs <= 155) val -= 6.0 * sin((tMs - 135) / 20.0 * pi);
           val += (rand.nextDouble() - 0.5) * 1.5;
           samples.add(val);
@@ -64,7 +64,7 @@ class SyntheticValidationDataset {
           final tMs = (i / fs) * 1000.0;
           double val = 0.0;
           if (tMs >= 85 && tMs <= 100) val -= 4.5 * sin((tMs - 85) / 15.0 * pi);
-          if (tMs >= 115 && tMs <= 135) val += 10.5 * sin((tMs - 115) / 20.0 * pi); // Delayed P100 @ 125.0ms
+          if (tMs >= 115 && tMs <= 135) val += 10.5 * sin((tMs - 115) / 20.0 * pi);
           if (tMs >= 155 && tMs <= 175) val -= 5.5 * sin((tMs - 155) / 20.0 * pi);
           val += (rand.nextDouble() - 0.5) * 1.5;
           samples.add(val);

@@ -26,7 +26,7 @@ class WorkflowController {
 
   WorkflowController()
       : _state = WorkflowState(
-          currentStepIndex: 5, // Step 6: Start Recording active by default
+          currentStepIndex: 5,
           steps: [
             ClinicalWorkflowStep(stepNumber: 1, stepEnum: ClinicalStepEnum.selectPatient, title: 'Select Patient', description: 'Arthur Pendelton (P-10929)', isCompleted: true, isActive: false),
             ClinicalWorkflowStep(stepNumber: 2, stepEnum: ClinicalStepEnum.createSession, title: 'Create Session', description: 'SES-2026-0807', isCompleted: true, isActive: false),
@@ -87,7 +87,6 @@ class WorkflowController {
   }
 
   void triggerAutomatedPipelineAfterRecording() {
-    // Automatically triggers DSP Pipeline -> CDSS -> Draft Report
-    advanceToNextStep(); // Step 7: Signal Processing
+    advanceToNextStep();
   }
 }

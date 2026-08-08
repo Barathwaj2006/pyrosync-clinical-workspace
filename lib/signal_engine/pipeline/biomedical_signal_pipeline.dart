@@ -26,12 +26,14 @@ class BiomedicalSignalPipeline {
     int totalSweeps = 100,
     int rejectedSweeps = 2,
   }) {
+    // Stage 1: Preprocessing (DC offset removal & baseline correction)
     final preprocessed = _preprocessor.preprocess(
       rawSamples: rawSignal,
       samplingRateHz: samplingRateHz,
       channelName: channelName,
     );
 
+    // Stage 2: Digital Filtering (Notch 50Hz, HighPass 1Hz, LowPass 100Hz)
     final filteredSamples = _filterPipeline.apply(preprocessed.samples, samplingRateHz);
     final cleanSignal = ProcessedSignal(
       samples: filteredSamples,
@@ -40,14 +42,21 @@ class BiomedicalSignalPipeline {
       isNormalized: false,
     );
 
+    // Stage 3: Artifact Detection
     final artifactReport = _artifactDetector.detect(filteredSamples, samplingRateHz);
+
+    // Stage 4 & 5: Frequency Analysis & EEG Band Power
     final frequencyResult = _frequencyAnalyzer.analyze(filteredSamples, samplingRateHz);
+
+    // Stage 6: VEP Peak Extraction (N75, P100, N145)
     final vepResult = _vepExtractor.extractPeaks(
       averagedTraceMs: filteredSamples,
       samplingRateHz: samplingRateHz,
       totalSweeps: totalSweeps,
       rejectedSweeps: rejectedSweeps,
     );
+
+    // Stage 7: Quality Assessment & SNR calculation
     final qualityReport = _qualityEvaluator.evaluate(
       signal: filteredSamples,
       artifactReport: artifactReport,

@@ -3,7 +3,7 @@ import 'dart:core';
 class BiosignalCursor {
   final double timeMs;
   final double amplitudeUv;
-  final String? peakLabel; // N75, P100, N145
+  final String? peakLabel;
   final bool isSnappedToPeak;
 
   BiosignalCursor({
@@ -32,7 +32,7 @@ class ClinicalAnnotation {
   final double timeMs;
   final String channelLabel;
   final String note;
-  final String category; // Artifact, Peak, Note, UserMarker
+  final String category;
   final DateTime createdAt;
 
   ClinicalAnnotation({

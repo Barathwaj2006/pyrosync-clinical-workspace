@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [v1.0.0-HARDENED] - 2026-08-08
 
-### Added & Verified (Sprint 17 — Doctor Desktop Release Hardening)
-- **24-Point Release Checklist (`doctor_application_release_checklist.md`)**: Verified 100% pass across Application Startup, Navigation, 12-Step Clinical Examination Workflow, Pre-Recording Safety, DSP Pipeline, 60 FPS Obsidian Visualization, CDSS Explainability, Reports, Doctor Approval (`SIG-SHA256` Lock), EDF Interoperability, Hardware Failure Recovery, Developer Console (`CTRL+SHIFT+D`), Performance Benchmarks, and Demo Data Safety.
-- **Synthetic Patient Identifier Standardization**: Updated demo records to use explicit synthetic identifiers (`DEMO-PATIENT-001: Arthur Pendelton [SYNTHETIC DEMO]`).
-- **CDSS Safety Banner**: Added mandatory CDSS disclaimer banner: *"AI assists. Clinician decides. For research & demonstration purposes only."*
-- **Scope Freeze Announcement**: Officially certified release classification as `HARDWARE_READY_PROTOTYPE` and **FROZEN** the Doctor Desktop Application scope.
+### Added & Configured
+- **Android APK Build Environment (`android/app/build.gradle` & `AndroidManifest.xml`)**:
+  - Configured Android package `com.pyromatics.pyrosync` targeting SDK 34 (Android 14) with Min SDK 21.
+  - Added permissions for Bluetooth Low Energy, Bluetooth Scan/Connect, and Location for real hardware discovery.
+  - Specified exact output path for release APK: `build/app/outputs/flutter-apk/app-release.apk`.

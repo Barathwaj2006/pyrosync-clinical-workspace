@@ -18,10 +18,8 @@ class DspPipelineValidator {
   List<ValidationTestResult> runPipelineValidationSuite() {
     final results = <ValidationTestResult>[];
 
-    // 1. Validate Normal VEP Peak Latency
     final normalDataset = SyntheticValidationDataset.generate(ValidationDatasetType.normalVep);
     final stopwatch = Stopwatch()..start();
-    // Simulate DSP Peak Extraction on Normal VEP dataset
     const detectedP100 = 102.4;
     const isNormalAccurate = (detectedP100 - 102.4).abs() < 1.0;
     stopwatch.stop();
@@ -35,7 +33,6 @@ class DspPipelineValidator {
       ),
     );
 
-    // 2. Validate Delayed P100 Detection
     stopwatch.reset();
     stopwatch.start();
     const detectedDelayedP100 = 125.0;
@@ -51,7 +48,6 @@ class DspPipelineValidator {
       ),
     );
 
-    // 3. Validate 50 Hz IIR Notch Filter Attenuation
     results.add(
       ValidationTestResult(
         testName: '50 Hz Powerline IIR Notch Attenuation',
@@ -61,7 +57,6 @@ class DspPipelineValidator {
       ),
     );
 
-    // 4. Validate Signal Quality Index & SNR dB
     results.add(
       ValidationTestResult(
         testName: 'Signal-to-Noise Ratio (SNR dB) Calculation',

@@ -3,8 +3,8 @@ import 'dart:math';
 import 'dart:typed_data';
 
 class HardwareTestHarnessConfig {
-  final double simulatedPacketLossRatio; // 0.0 to 0.5
-  final double simulatedCorruptionRatio; // 0.0 to 0.1
+  final double simulatedPacketLossRatio;
+  final double simulatedCorruptionRatio;
   final int simulatedLatencyMs;
   final bool isDisconnectSimulated;
 
@@ -33,13 +33,11 @@ class VirtualHardwareTester {
 
     if (_config.simulatedPacketLossRatio > 0.0 &&
         _random.nextDouble() < _config.simulatedPacketLossRatio) {
-      // Packet dropped
       return Uint8List(0);
     }
 
     if (_config.simulatedCorruptionRatio > 0.0 &&
         _random.nextDouble() < _config.simulatedCorruptionRatio) {
-      // Corrupt last byte CRC
       final corrupted = Uint8List.fromList(rawBytes);
       corrupted[corrupted.length - 1] = 0xFF;
       return corrupted;

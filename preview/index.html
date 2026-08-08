@@ -46,6 +46,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
     body { background: var(--canvas-bg); color: var(--text-primary); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
+    /* TOP NAVIGATION */
     .top-nav {
       height: 54px;
       background: var(--surface-base);
@@ -65,162 +66,506 @@
 
     .app-body { flex: 1; display: flex; overflow: hidden; }
 
-    .sidebar { width: 220px; background: var(--surface-base); border-right: 1px solid var(--border-color); padding: 12px 8px; display: flex; flex-direction: column; gap: 4px; backdrop-filter: blur(var(--glass-blur)); }
+    /* LEFT SIDEBAR */
+    .sidebar { width: 230px; background: var(--surface-base); border-right: 1px solid var(--border-color); padding: 12px 8px; display: flex; flex-direction: column; gap: 4px; backdrop-filter: blur(var(--glass-blur)); }
     .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 8px; color: var(--text-secondary); font-size: 13px; cursor: pointer; transition: all 0.2s; }
     .nav-item:hover, .nav-item.active { background: rgba(0, 229, 255, 0.12); color: var(--medical-blue); font-weight: 600; border: 1px solid rgba(0, 229, 255, 0.3); }
 
-    .context-panel { width: 280px; background: var(--surface-base); border-left: 1px solid var(--border-color); padding: 16px; backdrop-filter: blur(var(--glass-blur)); display: flex; flex-direction: column; gap: 16px; overflow-y: auto; }
+    /* RIGHT CONTEXT INSPECTOR */
+    .context-panel { width: 300px; background: var(--surface-base); border-left: 1px solid var(--border-color); padding: 16px; backdrop-filter: blur(var(--glass-blur)); display: flex; flex-direction: column; gap: 16px; overflow-y: auto; }
     .context-section { background: var(--surface-card); border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; }
 
+    /* MAIN WORKSPACE */
     .workspace { flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
     .glass-card { background: var(--surface-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; backdrop-filter: blur(var(--glass-blur)); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); }
 
+    /* BOTTOM STATUS BAR */
     .status-bar { height: 28px; background: #0D1117; border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; font-size: 10px; font-family: 'Roboto Mono', monospace; color: var(--text-secondary); }
     .status-indicator { display: flex; align-items: center; gap: 6px; color: var(--status-success); }
     .led { width: 6px; height: 6px; background: var(--status-success); border-radius: 50%; box-shadow: 0 0 8px var(--status-success); }
 
-    .view-panel { display: none; flex-direction: column; gap: 20px; height: 100%; }
+    .view-panel { display: none; flex-direction: column; gap: 20px; }
     .view-panel.active { display: flex; }
+
+    /* CLINICAL WAVEFORM CANVAS MOCK */
+    .waveform-box { background: var(--waveform-canvas); border: 1px solid var(--border-color); border-radius: 8px; height: 260px; position: relative; overflow: hidden; padding: 10px; }
+    .grid-lines { position: absolute; inset: 0; background-size: 40px 40px; background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px); }
+
+    /* CLINICAL BUTTONS */
+    .btn-primary { background: linear-gradient(135deg, var(--medical-blue), var(--deep-blue)); color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-secondary { background: rgba(255, 255, 255, 0.08); color: var(--text-primary); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+    .speed-btn { background: rgba(255,255,255,0.06); border: 1px solid var(--border-color); color: var(--text-secondary); padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; }
+    .speed-btn.active { background: rgba(0,229,255,0.2); border-color: var(--medical-blue); color: var(--medical-blue); font-weight: bold; }
+
+    /* DEVELOPER OVERLAY MODAL */
+    #dev-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); z-index: 9999; padding: 40px; justify-content: center; align-items: center; }
+    #dev-overlay.active { display: flex; }
   </style>
 </head>
 <body>
 
-  <!-- TOP BAR -->
+  <!-- TOP NAV BAR -->
   <div class="top-nav">
     <div class="brand">
       <div class="brand-logo">⚡</div>
       <div>
-        <div style="font-weight: bold; font-size: 13px; letter-spacing: 1px;">PYROSYNC</div>
-        <div style="font-size: 9px; color: var(--text-secondary);">Pyromatics Bio Solutions</div>
+        <div style="font-weight: bold; font-size: 13px; letter-spacing: 1px;">PYROSYNC WORKSPACE</div>
+        <div style="font-size: 9px; color: var(--text-secondary);">Pyromatics Bio Solutions • Clinical Version 1.0</div>
       </div>
+    </div>
+
+    <!-- IMPROVEMENT 1: ACTIVE PATIENT QUICK-SWITCH DROPDOWN -->
+    <div style="display: flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); padding: 3px 10px; border-radius: 20px;">
+      <span style="font-size: 10px; color: var(--text-secondary); font-weight: bold;">PATIENT:</span>
+      <select id="patient-switcher" onchange="switchActivePatient(this.value)" style="background: transparent; color: var(--medical-blue); border: none; font-size: 11px; font-weight: bold; cursor: pointer; outline: none;">
+        <option value="DEMO-PATIENT-001" style="background: #121620; color: #fff;">Arthur Pendelton (DEMO-PATIENT-001)</option>
+        <option value="DEMO-PATIENT-002" style="background: #121620; color: #fff;">Eleanor Vance (DEMO-PATIENT-002)</option>
+      </select>
     </div>
 
     <div style="display: flex; gap: 8px;">
-      <div class="badge-pill"><span style="color: var(--status-success);">● RELEASE STATUS:</span> HARDWARE-READY PROTOTYPE</div>
-      <div class="badge-pill"><span style="color: var(--medical-blue);">SCOPE:</span> FROZEN (Sprint 17 Complete)</div>
+      <div class="badge-pill"><span style="color: var(--status-success);">● DEVICE:</span> ESP32 Bio-Amp (Connected)</div>
+      <div class="badge-pill"><span style="color: var(--medical-blue);">SAMPLING:</span> 2500 Hz | 16-Ch EEG/VEP</div>
+    </div>
+
+    <div class="badge-pill" style="border-color: rgba(255,179,0,0.4); background: rgba(255,179,0,0.1); color: var(--vep-left-eye);">
+      ⚠️ AI assists. Clinician decides.
     </div>
 
     <div class="theme-switcher">
-      <button class="theme-btn active" onclick="setTheme('dark')">Clinical Dark</button>
-      <button class="theme-btn" onclick="setTheme('glass')">Glass Mode</button>
-      <button class="theme-btn" onclick="setTheme('light')">Clinical Light</button>
+      <button class="theme-btn active" onclick="setTheme('dark', this)">Clinical Dark</button>
+      <button class="theme-btn" onclick="setTheme('glass', this)">Glass Mode</button>
+      <button class="theme-btn" onclick="setTheme('light', this)">Clinical Light</button>
     </div>
 
     <div style="display: flex; align-items: center; gap: 10px;">
-      <select onchange="changeRole(this.value)" style="background: rgba(0,0,0,0.4); color: var(--medical-blue); border: 1px solid var(--border-color); padding: 4px 8px; border-radius: 6px; font-size: 11px;">
-        <option value="Doctor">Role: Doctor (Dr. E. Vance)</option>
-        <option value="Technician">Role: Technician (J. Miller)</option>
+      <select onchange="changeRole(this.value)" style="background: rgba(0,0,0,0.4); color: var(--medical-blue); border: 1px solid var(--border-color); padding: 5px 10px; border-radius: 6px; font-size: 11px;">
+        <option value="Doctor">Dr. E. Vance (Neurologist)</option>
+        <option value="Technician">J. Miller (Neurotech)</option>
       </select>
-      <button onclick="toggleDevOverlay()" style="background: rgba(0,229,255,0.2); color: var(--medical-blue); border: 1.5px solid var(--medical-blue); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">CTRL + SHIFT + D</button>
+      <button onclick="toggleDevOverlay()" style="background: rgba(0,229,255,0.15); color: var(--medical-blue); border: 1px solid var(--medical-blue); padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">CTRL + SHIFT + D</button>
     </div>
   </div>
 
-  <!-- MAIN APPLICATION BODY -->
+  <!-- MAIN APP BODY -->
   <div class="app-body">
     <!-- LEFT SIDEBAR -->
     <div class="sidebar">
-      <div class="nav-item active" onclick="switchView('dashboard')">📊 Dashboard</div>
-      <div class="nav-item" onclick="switchView('patients')">👥 Patients</div>
-      <div class="nav-item" onclick="switchView('sessions')">⚙️ Sessions</div>
-      <div class="nav-item" onclick="switchView('recording')">📈 Recording</div>
-      <div class="nav-item" onclick="switchView('analysis')">🔍 Analysis</div>
-      <div class="nav-item" onclick="switchView('ai')">🧠 AI CDSS Workspace</div>
-      <div class="nav-item" onclick="switchView('reports')">📄 Reports</div>
+      <div class="nav-item active" onclick="switchView('dashboard', this)">📊 Dashboard</div>
+      <div class="nav-item" onclick="switchView('patients', this)">👥 Patients</div>
+      <div class="nav-item" onclick="switchView('sessions', this)">⚙️ Sessions</div>
+      <div class="nav-item" onclick="switchView('recording', this)">📈 Recording</div>
+      <div class="nav-item" onclick="switchView('analysis', this)">🔍 Analysis</div>
+      <div class="nav-item" onclick="switchView('ai', this)">🧠 AI CDSS Workspace</div>
+      <div class="nav-item" onclick="switchView('reports', this)">📄 Reports</div>
+      <div class="nav-item" onclick="switchView('neurolab', this)">🔬 NeuroLab Sim</div>
       <div style="margin-top: 6px; border-top: 1px solid var(--border-color); padding-top: 6px;"></div>
       <div class="nav-item" onclick="toggleDevOverlay()" style="color: var(--medical-blue); font-weight: bold;">⚡ Developer Console</div>
       <div style="margin-top: auto;"></div>
-      <div class="nav-item" onclick="switchView('settings')">🛠️ Settings</div>
-      <div class="nav-item" onclick="switchView('help')">❓ Help</div>
+      <div class="nav-item" onclick="switchView('settings', this)">🛠️ Settings</div>
+      <div class="nav-item" onclick="switchView('help', this)">❓ Help</div>
     </div>
 
-    <!-- MAIN WORKSPACE -->
+    <!-- MAIN WORKSPACE CONTENT -->
     <div class="workspace">
 
-      <!-- DASHBOARD VIEW -->
+      <!-- 1. DASHBOARD VIEW -->
       <div id="view-dashboard" class="view-panel active">
-        <!-- CDSS MANDATORY CLINICAL BANNER -->
-        <div style="background: rgba(0, 229, 255, 0.1); border: 1px solid var(--medical-blue); padding: 10px 16px; border-radius: 8px; font-size: 12px; display: flex; justify-content: space-between; align-items: center;">
-          <span style="color: var(--medical-blue); font-weight: bold;">🧠 CLINICAL DECISION SUPPORT SYSTEM: AI ASSISTS. CLINICIAN DECIDES.</span>
-          <span style="font-size: 10px; color: var(--text-secondary);">FOR RESEARCH & DEMONSTRATION PURPOSES ONLY</span>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h2 style="font-size: 20px;">CLINICAL DASHBOARD & TODAY'S RECORDINGS</h2>
+            <div style="font-size: 12px; color: var(--text-secondary);">Overview of active EEG/VEP patient cases and bio-amplifier telemetry</div>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn-primary" onclick="switchView('recording', document.querySelectorAll('.nav-item')[3])">+ Start New Recording</button>
+            <button class="btn-secondary" onclick="switchView('patients', document.querySelectorAll('.nav-item')[1])">Patient Directory</button>
+          </div>
         </div>
 
-        <h2 style="font-size: 22px;">DOCTOR COMMAND CENTER & HARDENED RELEASE</h2>
-        <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Sprint 17 QA Verified • Scope Frozen • Hardware-Ready</div>
-
-        <!-- 4 SUMMARY CARDS -->
         <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
           <div class="glass-card">
-            <div style="font-size: 11px; color: var(--text-secondary);">QA CHECKLIST</div>
-            <div style="font-size: 28px; font-weight: bold; color: var(--status-success); margin: 6px 0;">24 / 24</div>
-            <div style="font-size: 11px; color: var(--status-success);">100% Items Verified</div>
+            <div style="font-size: 11px; color: var(--text-secondary);">TODAY'S SESSIONS</div>
+            <div style="font-size: 26px; font-weight: bold; color: var(--medical-blue); margin: 6px 0;">4 Completed</div>
+            <div style="font-size: 11px; color: var(--status-success);">1 Pending AI Review</div>
           </div>
           <div class="glass-card">
-            <div style="font-size: 11px; color: var(--text-secondary);">CLASSIFICATION</div>
-            <div style="font-size: 22px; font-weight: bold; color: var(--medical-blue); margin: 6px 0;">HARDWARE-READY</div>
-            <div style="font-size: 11px; color: var(--text-secondary);">Prototype Release</div>
+            <div style="font-size: 11px; color: var(--text-secondary);">SIGNAL QUALITY INDEX</div>
+            <div style="font-size: 26px; font-weight: bold; color: var(--status-success); margin: 6px 0;">98.4 %</div>
+            <div style="font-size: 11px; color: var(--status-success);">Impedance < 5 kΩ</div>
           </div>
           <div class="glass-card">
-            <div style="font-size: 11px; color: var(--text-secondary);">PATIENT DEMO DATA</div>
-            <div style="font-size: 22px; font-weight: bold; color: var(--vep-left-eye); margin: 6px 0;">DEMO-PATIENT-001</div>
-            <div style="font-size: 11px; color: var(--text-secondary);">Synthetic Demo Data</div>
+            <div style="font-size: 11px; color: var(--text-secondary);">VEP P100 LATENCY AVG</div>
+            <div style="font-size: 26px; font-weight: bold; color: var(--vep-left-eye); margin: 6px 0;">102.4 ms</div>
+            <div style="font-size: 11px; color: var(--text-secondary);">Normal (90-110 ms)</div>
           </div>
           <div class="glass-card">
-            <div style="font-size: 11px; color: var(--text-secondary);">DOCTOR SCOPE</div>
-            <div style="font-size: 28px; font-weight: bold; color: var(--status-success); margin: 6px 0;">FROZEN</div>
-            <div style="font-size: 11px; color: var(--text-secondary);">Next: Patient Android App</div>
+            <div style="font-size: 11px; color: var(--text-secondary);">HARDWARE STATUS</div>
+            <div style="font-size: 26px; font-weight: bold; color: var(--status-success); margin: 6px 0;">ONLINE</div>
+            <div style="font-size: 11px; color: var(--text-secondary);">ESP32 MCU @ 36.8°C</div>
           </div>
+        </div>
+
+        <div class="glass-card">
+          <h3 style="font-size: 14px; margin-bottom: 12px; color: var(--medical-blue);">📋 TODAY'S PATIENT QUEUE (AUG 8, 2026)</h3>
+          <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: left;">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">
+                <th style="padding: 8px;">Patient ID</th>
+                <th>Patient Name</th>
+                <th>Age/Sex</th>
+                <th>Protocol</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 10px; font-family: monospace; color: var(--medical-blue);">DEMO-PATIENT-001</td>
+                <td style="font-weight: 600;">Arthur Pendelton</td>
+                <td>63 / M</td>
+                <td>Pattern Reversal VEP</td>
+                <td><span style="color: var(--status-warning);">AI Review Pending</span></td>
+                <td><button class="btn-secondary" onclick="switchView('ai', document.querySelectorAll('.nav-item')[5])">Review CDSS</button></td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 10px; font-family: monospace; color: var(--medical-blue);">DEMO-PATIENT-002</td>
+                <td style="font-weight: 600;">Eleanor Vance</td>
+                <td>45 / F</td>
+                <td>Standard 10-20 EEG</td>
+                <td><span style="color: var(--status-success);">Signed & Approved</span></td>
+                <td><button class="btn-secondary" onclick="switchView('reports', document.querySelectorAll('.nav-item')[6])">View Report</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 2. PATIENTS VIEW -->
+      <div id="view-patients" class="view-panel">
+        <h2 style="font-size: 20px;">PATIENT DIRECTORY & CLINICAL HISTORY</h2>
+        <div class="glass-card">
+          <input type="text" placeholder="Search patient name, MRN, or diagnosis..." style="width: 100%; padding: 10px 14px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); margin-bottom: 16px;">
+          <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
+            <div style="border-right: 1px solid var(--border-color); padding-right: 16px;">
+              <div style="padding: 10px; background: rgba(0,229,255,0.1); border: 1px solid var(--medical-blue); border-radius: 6px; cursor: pointer; margin-bottom: 8px;" onclick="switchActivePatient('DEMO-PATIENT-001')">
+                <div style="font-weight: bold; font-size: 13px;">Arthur Pendelton</div>
+                <div style="font-size: 10px; color: var(--text-secondary);">MRN: DEMO-PATIENT-001 • Age 63</div>
+              </div>
+              <div style="padding: 10px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer;" onclick="switchActivePatient('DEMO-PATIENT-002')">
+                <div style="font-weight: bold; font-size: 13px;">Eleanor Vance</div>
+                <div style="font-size: 10px; color: var(--text-secondary);">MRN: DEMO-PATIENT-002 • Age 45</div>
+              </div>
+            </div>
+            <div>
+              <h3 id="patient-summary-title" style="font-size: 15px; margin-bottom: 8px; color: var(--medical-blue);">Arthur Pendelton — Clinical Summary</h3>
+              <p id="patient-summary-desc" style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Primary Referral: Suspected Demyelinating Optic Neuropathy (Right Eye Visual Acuity Decrease).</p>
+              <div style="display: flex; gap: 10px;">
+                <button class="btn-primary" onclick="switchView('analysis', document.querySelectorAll('.nav-item')[4])">Open VEP Analysis</button>
+                <button class="btn-secondary" onclick="switchView('recording', document.querySelectorAll('.nav-item')[3])">New Recording</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. SESSIONS VIEW -->
+      <div id="view-sessions" class="view-panel">
+        <h2 style="font-size: 20px;">ACQUISITION PROTOCOL & IMPEDANCE CHECK</h2>
+        <div class="glass-card">
+          <h3 style="font-size: 14px; margin-bottom: 10px; color: var(--medical-blue);">10-20 Scalp Electrode Contact Impedance (kΩ)</h3>
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; text-align: center; font-family: monospace;">
+            <div style="background: rgba(0,230,118,0.15); border: 1px solid var(--status-success); padding: 12px; border-radius: 6px; color: var(--status-success);">O1: 1.8 kΩ (PASS)</div>
+            <div style="background: rgba(0,230,118,0.15); border: 1px solid var(--status-success); padding: 12px; border-radius: 6px; color: var(--status-success);">O2: 2.1 kΩ (PASS)</div>
+            <div style="background: rgba(0,230,118,0.15); border: 1px solid var(--status-success); padding: 12px; border-radius: 6px; color: var(--status-success);">Oz: 1.5 kΩ (PASS)</div>
+            <div style="background: rgba(0,230,118,0.15); border: 1px solid var(--status-success); padding: 12px; border-radius: 6px; color: var(--status-success);">Cz: 2.4 kΩ (PASS)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. RECORDING VIEW (IMPROVEMENT 2: SWEEP SPEED SELECTOR) -->
+      <div id="view-recording" class="view-panel">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 style="font-size: 20px;">REAL-TIME SIGNAL OSCILLOSCOPE (2500 Hz)</h2>
+          <div style="display: flex; items-center; gap: 12px;">
+            <!-- SWEEP SPEED SELECTOR -->
+            <div style="display: flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); padding: 3px 8px; border-radius: 6px;">
+              <span style="font-size: 10px; color: var(--text-secondary); font-weight: bold;">SWEEP SPEED:</span>
+              <button class="speed-btn" onclick="setSweepSpeed('15', this)">15 mm/s</button>
+              <button class="speed-btn active" onclick="setSweepSpeed('30', this)">30 mm/s</button>
+              <button class="speed-btn" onclick="setSweepSpeed('60', this)">60 mm/s</button>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-primary">▶ START SWEEP</button>
+              <button class="btn-secondary" style="background: rgba(255,61,0,0.2); color: var(--status-danger);">⬛ STOP</button>
+            </div>
+          </div>
+        </div>
+        <div class="waveform-box">
+          <div class="grid-lines"></div>
+          <svg width="100%" height="100%" style="position: absolute; inset: 0;">
+            <path d="M 0 40 Q 50 10, 100 40 T 200 40 T 300 40 T 400 40 T 500 40 T 600 40 T 700 40 T 800 40" fill="none" stroke="#00E5FF" stroke-width="1.5" />
+            <path d="M 0 100 Q 50 70, 100 100 T 200 100 T 300 100 T 400 100 T 500 100 T 600 100 T 700 100 T 800 100" fill="none" stroke="#00E676" stroke-width="1.5" />
+            <path d="M 0 160 Q 50 140, 100 160 T 200 160 T 300 160 T 400 160 T 500 160 T 600 160 T 700 160 T 800 160" fill="none" stroke="#FFB300" stroke-width="1.5" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- 5. ANALYSIS VIEW (IMPROVEMENT 3: ONE-CLICK INVERT POLARITY CONTROL) -->
+      <div id="view-analysis" class="view-panel">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 style="font-size: 20px;">VEP LATENCY & WAVEFORM ANALYSIS</h2>
+          <!-- ONE-CLICK INVERT POLARITY TOGGLE BUTTON -->
+          <button id="btn-invert-polarity" class="btn-secondary" onclick="togglePolarityInversion()" style="border-color: var(--medical-blue); font-weight: bold; display: flex; align-items: center; gap: 6px;">
+            <span>🔄 Invert Polarity:</span> <span id="polarity-state-lbl" style="color: var(--status-warning);">OFF</span>
+          </button>
+        </div>
+        <div class="glass-card">
+          <h3 style="font-size: 14px; color: var(--medical-blue); margin-bottom: 8px;">Averaged Visual Evoked Potential (P100 Peak Extraction)</h3>
+          <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 12px;">Left Eye (Gold) vs Right Eye (Green) • Cursor A: 72 ms | Cursor B: 102 ms (Δt = 30 ms)</div>
+          <div class="waveform-box">
+            <div class="grid-lines"></div>
+            <svg id="vep-svg-canvas" width="100%" height="100%" style="position: absolute; inset: 0; transition: transform 0.3s ease;">
+              <!-- Left Eye VEP -->
+              <path d="M 0 130 L 150 130 L 200 180 L 280 40 L 350 200 L 500 130 L 800 130" fill="none" stroke="#FFB300" stroke-width="2.5" />
+              <!-- Right Eye VEP -->
+              <path d="M 0 130 L 150 130 L 200 175 L 320 40 L 390 195 L 500 130 L 800 130" fill="none" stroke="#00E676" stroke-width="2.5" stroke-dasharray="4" />
+              <!-- Cursor Lines -->
+              <line x1="200" y1="0" x2="200" y2="260" stroke="#00E5FF" stroke-width="1.5" stroke-dasharray="2" />
+              <line x1="280" y1="0" x2="280" y2="260" stroke="#FF3D00" stroke-width="1.5" stroke-dasharray="2" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. AI WORKSPACE VIEW (IMPROVEMENT 4: CONFIDENCE INDICATOR BESIDE IMPRESSION) -->
+      <div id="view-ai" class="view-panel">
+        <h2 style="font-size: 20px;">AI CLINICAL DECISION SUPPORT SYSTEM (CDSS)</h2>
+        <div class="glass-card" style="border-left: 4px solid var(--status-warning);">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 11px; color: var(--status-warning); font-weight: bold;">EXPLAINABLE AI IMPRESSION</div>
+            <!-- CONFIDENCE INDICATOR -->
+            <div class="badge-pill" style="border-color: var(--status-success); background: rgba(0,230,118,0.15); color: var(--status-success); font-weight: bold;">
+              🎯 Confidence: 94.2%
+            </div>
+          </div>
+          <h3 style="font-size: 16px; margin: 8px 0;">Suspected Delayed P100 Latency (Right Eye: 118 ms vs Normal 102 ms)</h3>
+          <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.6;">Rule Engine evaluated 16-channel EEG/VEP waveform features. P100 peak latency on Right Eye exceeds 2.5 standard deviations from normative age-matched baseline, suggesting conduction delay along optic nerve pathways.</p>
+          <div style="margin-top: 16px; display: flex; gap: 12px;">
+            <button class="btn-primary" onclick="switchView('reports', document.querySelectorAll('.nav-item')[6])">🔒 Sign & Approve Clinical Report</button>
+            <button class="btn-secondary">Request Tech Re-check</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. REPORTS VIEW -->
+      <div id="view-reports" class="view-panel">
+        <h2 style="font-size: 20px;">CLINICAL DIAGNOSTIC REPORT GENERATOR</h2>
+        <div class="glass-card">
+          <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 12px; display: flex; justify-content: space-between;">
+            <div>
+              <h3 style="font-size: 16px;">PYROSYNC NEURODIAGNOSTIC REPORT</h3>
+              <div style="font-size: 11px; color: var(--text-secondary);">Pyromatics Bio Solutions Medical Platform</div>
+            </div>
+            <div style="text-align: right; font-family: monospace; font-size: 11px; color: var(--medical-blue);">
+              REPORT ID: RPT-2026-0808-01<br>
+              SIG-SHA256: 8f9b4c2a...
+            </div>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn-primary">📄 Export PDF</button>
+            <button class="btn-secondary">💾 Export EDF+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. NEUROLAB SIM VIEW -->
+      <div id="view-neurolab" class="view-panel">
+        <h2 style="font-size: 20px;">NEUROLAB VIRTUAL ACQUISITION SIMULATOR</h2>
+        <div class="glass-card">
+          <h3 style="font-size: 14px; color: var(--medical-blue); margin-bottom: 10px;">Synthetic Biosignal Controls (2500 Hz Stream)</h3>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+            <div>
+              <label style="font-size: 11px; color: var(--text-secondary);">Signal Pattern</label>
+              <select style="width: 100%; padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 6px; margin-top: 4px;">
+                <option>Normal Alpha (10 Hz)</option>
+                <option>Flash VEP Response</option>
+                <option>Epileptiform Spike-and-Wave</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size: 11px; color: var(--text-secondary);">Artifact Injection</label>
+              <select style="width: 100%; padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 6px; margin-top: 4px;">
+                <option>None (Clean)</option>
+                <option>EOG Eye Blink (1.5 Hz)</option>
+                <option>50 Hz Line Interference</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size: 11px; color: var(--text-secondary);">Baseline Drift</label>
+              <input type="range" style="width: 100%; margin-top: 10px;">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9. SETTINGS VIEW -->
+      <div id="view-settings" class="view-panel">
+        <h2 style="font-size: 20px;">SYSTEM SETTINGS & HARDWARE CONFIGURATION</h2>
+        <div class="glass-card">
+          <h3 style="font-size: 14px; color: var(--medical-blue); margin-bottom: 10px;">DSP Filter Coefficients & Sampling Frequency</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-size: 12px;">
+            <div>Sampling Frequency: <b>2500 Hz</b></div>
+            <div>Notch Filter: <b>50 Hz / 60 Hz Auto</b></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 10. HELP VIEW -->
+      <div id="view-help" class="view-panel">
+        <h2 style="font-size: 20px;">CLINICIAN USER MANUAL & REFERENCE</h2>
+        <div class="glass-card">
+          <h3 style="font-size: 14px; color: var(--medical-blue); margin-bottom: 10px;">VEP Normal Latency Reference Table</h3>
+          <p style="font-size: 12px; color: var(--text-secondary);">P100 Peak Latency Nominal Range: 90 ms – 110 ms. Latency exceeding 115 ms indicates demyelinating optic pathway delay.</p>
         </div>
       </div>
 
     </div>
 
-    <!-- RIGHT CONTEXT INSPECTOR PANEL -->
+    <!-- RIGHT CONTEXT PANEL -->
     <div class="context-panel">
       <div style="font-size: 10px; font-weight: bold; letter-spacing: 1px; color: var(--medical-blue);">CLINICAL CONTEXT INSPECTOR</div>
       <div class="context-section">
-        <div style="font-size: 12px; font-weight: bold;">Arthur Pendelton [SYNTHETIC DEMO]</div>
-        <div style="font-size: 10px; color: var(--text-secondary);">ID: DEMO-PATIENT-001 • Male • Age 63</div>
+        <div id="ctx-patient-name" style="font-size: 12px; font-weight: bold;">Arthur Pendelton [DEMO]</div>
+        <div id="ctx-patient-id" style="font-size: 10px; color: var(--text-secondary);">ID: DEMO-PATIENT-001 • Male • Age 63</div>
       </div>
       <div class="context-section">
-        <div style="font-size: 10px; font-weight: bold; color: var(--text-secondary); margin-bottom: 8px;">DOCTOR APPLICATION SCOPE</div>
+        <div style="font-size: 10px; font-weight: bold; color: var(--text-secondary); margin-bottom: 8px;">VEP LATENCY METRICS</div>
         <div style="display: flex; justify-content: space-between; font-size: 11px; font-family: monospace;">
-          <span>Scope:</span><span style="color: var(--status-success);">FROZEN</span>
+          <span>N75 Latency:</span><span id="ctx-n75" style="color: var(--medical-blue);">72.0 ms</span>
         </div>
         <div style="display: flex; justify-content: space-between; font-size: 11px; font-family: monospace; margin-top: 4px;">
-          <span>Class:</span><span style="color: var(--medical-blue);">Hardware-Ready</span>
+          <span>P100 Latency:</span><span id="ctx-p100" style="color: var(--vep-left-eye);">102.4 ms</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 11px; font-family: monospace; margin-top: 4px;">
+          <span>N145 Latency:</span><span id="ctx-n145" style="color: var(--status-success);">142.0 ms</span>
         </div>
       </div>
     </div>
-
   </div>
 
   <!-- BOTTOM STATUS BAR -->
   <div class="status-bar">
-    <div class="status-indicator"><div class="led"></div> SPRINT 17 QA HARDENING COMPLETE: 24 / 24 CHECKLIST ITEMS PASSED</div>
-    <div>CLASSIFICATION: HARDWARE-READY PROTOTYPE (DOCTOR DESKTOP SCOPE FROZEN)</div>
-    <div>PyroSync Release v1.0 | Pyromatics Bio Solutions</div>
+    <div class="status-indicator"><div class="led"></div> PYROSYNC CLINICAL WORKSPACE ACTIVE | 2500 HZ ACQUISITION ONLINE</div>
+    <div>HARDWARE TEMP: 36.8°C (NOMINAL)</div>
+    <div>Pyromatics Bio Solutions © 2026</div>
+  </div>
+
+  <!-- DEVELOPER OVERLAY MODAL (CTRL + SHIFT + D) -->
+  <div id="dev-overlay">
+    <div class="glass-card" style="width: 700px; max-height: 80vh; overflow-y: auto;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px;">
+        <h3 style="font-size: 16px; color: var(--medical-blue);">⚡ DEVELOPER CONSOLE & HARDWARE DIAGNOSTICS</h3>
+        <button onclick="toggleDevOverlay()" style="background: none; border: none; color: var(--status-danger); font-weight: bold; cursor: pointer; font-size: 16px;">✕</button>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; font-family: monospace; font-size: 11px; margin-bottom: 16px;">
+        <div style="background: rgba(0,0,0,0.4); padding: 10px; border-radius: 6px;">PACKET RATE: <b>2500 Hz</b></div>
+        <div style="background: rgba(0,0,0,0.4); padding: 10px; border-radius: 6px;">PACKET LOSS: <b>0.00 %</b></div>
+        <div style="background: rgba(0,0,0,0.4); padding: 10px; border-radius: 6px;">MEMORY: <b>54.2 MB</b></div>
+      </div>
+      <div style="font-size: 11px; font-family: monospace; background: #000; padding: 12px; border-radius: 6px; color: #00E676; height: 160px; overflow-y: auto;">
+        [08:27:01] SYS_INIT: PyroSync Core Engines Loaded.<br>
+        [08:27:02] DSP_PIPELINE: 50Hz Notch Filter Active.<br>
+        [08:27:03] HW_THERMAL: MCU Operating Temp Nominal (36.8°C).<br>
+        [08:27:04] CDSS_RULES: Rule Engine Evaluated DEMO-PATIENT-001 VEP.
+      </div>
+    </div>
   </div>
 
   <script>
-    function setTheme(mode) {
-      document.body.className = '';
-      document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
-      if (mode === 'glass') { document.body.classList.add('theme-glass'); event.target.classList.add('active'); }
-      else if (mode === 'light') { document.body.classList.add('theme-light'); event.target.classList.add('active'); }
-      else { event.target.classList.add('active'); }
+    let isPolarityInverted = false;
+
+    // 1. ACTIVE PATIENT QUICK-SWITCH
+    function switchActivePatient(patientId) {
+      const selectEl = document.getElementById('patient-switcher');
+      selectEl.value = patientId;
+
+      const nameEl = document.getElementById('ctx-patient-name');
+      const idEl = document.getElementById('ctx-patient-id');
+      const p100El = document.getElementById('ctx-p100');
+
+      if (patientId === 'DEMO-PATIENT-002') {
+        nameEl.innerText = 'Eleanor Vance [DEMO]';
+        idEl.innerText = 'ID: DEMO-PATIENT-002 • Female • Age 45';
+        p100El.innerText = '98.5 ms';
+        p100El.style.color = '#00E676';
+      } else {
+        nameEl.innerText = 'Arthur Pendelton [DEMO]';
+        idEl.innerText = 'ID: DEMO-PATIENT-001 • Male • Age 63';
+        p100El.innerText = '102.4 ms';
+        p100El.style.color = '#FFB300';
+      }
     }
 
-    function switchView(viewName) {
-      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    // 2. RECORDING SWEEP SPEED SELECTOR
+    function setSweepSpeed(speed, btnEl) {
+      document.querySelectorAll('.speed-btn').forEach(btn => btn.classList.remove('active'));
+      btnEl.classList.add('active');
+    }
+
+    // 3. ONE-CLICK VEP POLARITY INVERSION (VISUAL ONLY)
+    function togglePolarityInversion() {
+      isPolarityInverted = !isPolarityInverted;
+      const lbl = document.getElementById('polarity-state-lbl');
+      const svg = document.getElementById('vep-svg-canvas');
+
+      if (isPolarityInverted) {
+        lbl.innerText = 'ON';
+        lbl.style.color = '#00E5FF';
+        svg.style.transform = 'scaleY(-1)';
+      } else {
+        lbl.innerText = 'OFF';
+        lbl.style.color = '#FFB300';
+        svg.style.transform = 'scaleY(1)';
+      }
+    }
+
+    function setTheme(mode, btnEl) {
+      document.body.className = '';
+      if (btnEl) {
+        document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+        btnEl.classList.add('active');
+      }
+      if (mode === 'glass') { document.body.classList.add('theme-glass'); }
+      else if (mode === 'light') { document.body.classList.add('theme-light'); }
+    }
+
+    function switchView(viewName, navEl) {
+      if (navEl) {
+        document.querySelectorAll('.sidebar .nav-item').forEach(el => el.classList.remove('active'));
+        navEl.classList.add('active');
+      }
       document.querySelectorAll('.view-panel').forEach(el => el.classList.remove('active'));
       
-      event.target.classList.add('active');
       const targetPanel = document.getElementById('view-' + viewName);
       if (targetPanel) targetPanel.classList.add('active');
     }
 
-    function changeRole(role) { alert('Role set: ' + role); }
-    function toggleDevOverlay() { alert('Developer Console (CTRL+SHIFT+D) Active'); }
+    function changeRole(role) {
+      alert('Clinical Role changed to: ' + role);
+    }
+
+    function toggleDevOverlay() {
+      const modal = document.getElementById('dev-overlay');
+      modal.classList.toggle('active');
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.ctrlKey && e.shiftKey && (e.key === 'D' || e.key === 'd')) {
+        e.preventDefault();
+        toggleDevOverlay();
+      }
+    });
   </script>
 </body>
 </html>

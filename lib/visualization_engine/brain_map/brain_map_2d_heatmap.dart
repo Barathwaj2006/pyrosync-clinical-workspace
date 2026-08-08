@@ -51,21 +51,18 @@ class ScalpPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width < size.height ? size.width * 0.4 : size.height * 0.4;
 
-    // Draw Head Outline (Circle)
     final headPaint = Paint()
       ..color = const Color(0xFF1E293B)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
     canvas.drawCircle(center, radius, headPaint);
 
-    // Draw Nose Triangle
     final nosePath = Path()
       ..moveTo(center.dx - 10, center.dy - radius)
       ..lineTo(center.dx, center.dy - radius - 15)
       ..lineTo(center.dx + 10, center.dy - radius);
     canvas.drawPath(nosePath, headPaint);
 
-    // 10-20 Relative Electrode Coordinates (x, y normalized [-1, 1])
     final Map<String, Offset> electrodePositions = {
       'Fz': Offset(center.dx, center.dy - radius * 0.5),
       'Cz': Offset(center.dx, center.dy),
@@ -77,7 +74,6 @@ class ScalpPainter extends CustomPainter {
       'T4': Offset(center.dx + radius * 0.75, center.dy),
     };
 
-    // Draw Electrode Activity Nodes with Viridis/Cyan Color Scaling
     electrodePositions.forEach((label, pos) {
       final power = channelPowers[label] ?? 12.0;
       final intensity = (power / 40.0).clamp(0.0, 1.0);
@@ -88,14 +84,12 @@ class ScalpPainter extends CustomPainter {
         intensity,
       )!;
 
-      // Glow halo
       canvas.drawCircle(
         pos,
         14.0,
         Paint()..color = nodeColor.withOpacity(0.25),
       );
 
-      // Core electrode dot
       canvas.drawCircle(pos, 6.0, Paint()..color = nodeColor);
     });
   }

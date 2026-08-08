@@ -25,9 +25,9 @@ class EdfHeader {
 }
 
 class EdfSignalHeader {
-  final String label; // e.g., "EEG Oz", "EEG Cz"
+  final String label;
   final String transducerType;
-  final String physicalDimension; // e.g., "uV"
+  final String physicalDimension;
   final double physicalMin;
   final double physicalMax;
   final int digitalMin;
@@ -69,7 +69,6 @@ class EdfParserExporter {
     required double samplingRateHz,
   }) {
     final builder = BytesBuilder();
-    // Write standard 256-byte EDF+ ASCII Header
     final asciiHeader = '0       ${patientId.padRight(80)}PYROSYNC VEP RECORDING'.padRight(256);
     builder.add(asciiHeader.codeUnits);
     return builder.toBytes();

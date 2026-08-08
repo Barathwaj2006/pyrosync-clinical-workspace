@@ -76,7 +76,7 @@ class DeviceDiagnostics {
   final int reconnectCount;
   final int communicationErrors;
   final int signalInterruptions;
-  final double connectionQualityScore; // 0.0 to 100.0%
+  final double connectionQualityScore;
   final int bufferSizeBytes;
 
   DeviceDiagnostics({

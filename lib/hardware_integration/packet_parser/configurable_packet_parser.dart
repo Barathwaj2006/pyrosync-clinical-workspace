@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
 class PacketHeaderConfig {
-  final List<int> headerBytes; // e.g., [0xA5, 0x5A]
-  final List<int> footerBytes; // e.g., [0x5B, 0xB5]
+  final List<int> headerBytes;
+  final List<int> footerBytes;
   final int payloadLength;
   final int channelCount;
 
@@ -50,7 +50,7 @@ class ConfigurablePacketParser {
     final channels = <double>[];
     for (int i = 0; i < config.channelCount; i++) {
       final sampleInt24 = byteData.getInt16(8 + (i * 2), Endian.big);
-      channels.add(sampleInt24 * 0.0223); // Scale to microvolts (uV)
+      channels.add(sampleInt24 * 0.0223);
     }
 
     return ParsedHardwarePacket(

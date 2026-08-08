@@ -1,26 +1,28 @@
-# PyroSync Sprint 17: Doctor Application Final QA & Release Hardening — Walkthrough
+# PyroSync Android APK Build Instructions & Exact Locations
 
-> **Product**: PyroSync Doctor Clinical Workspace  
+> **Product**: PyroSync Android Application Build  
 > **Company**: Pyromatics Bio Solutions  
 > **Tagline**: Connecting Brain Signals to Clinical Intelligence  
-> **Sprint**: Sprint 17 — Doctor Application Final QA & Release Hardening  
-> **Release Classification**: `HARDWARE_READY_PROTOTYPE` (Doctor Desktop Scope Frozen)  
+> **Package ID**: `com.pyromatics.pyrosync`
 
 ---
 
-## 1. Executive Summary & Scope Freeze Announcement
+## 1. How to Build the Android APK
 
-As Senior Flutter Architect & Lead QA Engineer at **Pyromatics Bio Solutions**, I have completed **Sprint 17: Doctor Application Final QA & Release Hardening** for **PyroSync Clinical Workspace**.
+Run the following command in **PowerShell** inside the project root:
 
-The entire **PyroSync Doctor Desktop Application** is fully integrated, stabilized, and hardened. All 24 release checklist verification items passed with 100% success. The application scope for the Doctor Desktop workspace is now officially **FROZEN**.
+```powershell
+cd "C:\Users\barat\OneDrive\Documents\Pyromatics Bio-Solution" ; flutter build apk --release
+```
 
 ---
 
-## 2. Deliverable Files & Documentation Links
+## 2. Exact Generated File Locations
 
-| Deliverable | Saved File Location | Clickable Link |
-| :--- | :--- | :--- |
-| **24-Point Release Checklist** | `doctor_application_release_checklist.md` | [doctor_application_release_checklist.md](file:///C:/Users/barat/OneDrive/Documents/Pyromatics%20Bio-Solution/doctor_application_release_checklist.md) |
-| **Final QA & Hardening Report** | `doctor_application_qa_report.md` | [doctor_application_qa_report.md](file:///C:/Users/barat/OneDrive/Documents/Pyromatics%20Bio-Solution/doctor_application_qa_report.md) |
-| **Interactive Web Preview** | `preview/index.html` | [preview/index.html](file:///C:/Users/barat/OneDrive/Documents/Pyromatics%20Bio-Solution/preview/index.html) |
-| **Release Changelog** | `CHANGELOG.md` | [CHANGELOG.md](file:///C:/Users/barat/OneDrive/Documents/Pyromatics%20Bio-Solution/CHANGELOG.md) |
+| Output Type | Saved Location Link / Absolute Path |
+| :--- | :--- |
+| **Release APK (Production)** | [app-release.apk](file:///C:/Users/barat/OneDrive/Documents/Pyromatics%20Bio-Solution/build/app/outputs/flutter-apk/app-release.apk) <br>`C:\Users\barat\OneDrive\Documents\Pyromatics Bio-Solution\build\app\outputs\flutter-apk\app-release.apk` |
+| **Debug APK (Development)** | [app-debug.apk](file:///C:/Users/barat/OneDrive/Documents/Pyromatics%20Bio-Solution/build/app/outputs/flutter-apk/app-debug.apk) <br>`C:\Users\barat\OneDrive\Documents\Pyromatics Bio-Solution\build\app\outputs\flutter-apk\app-debug.apk` |
+| **Android Manifest Specification** | [AndroidManifest.xml](file:///C:/Users/barat/OneDrive/Documents/Pyromatics%20Bio-Solution/android/app/src/main/AndroidManifest.xml) |
+| **Android App Build Script** | [build.gradle](file:///C:/Users/barat/OneDrive/Documents/Pyromatics%20Bio-Solution/android/app/build.gradle) |
+| **Interactive Web Application** | [preview/index.html](file:///C:/Users/barat/OneDrive/Documents/Pyromatics%20Bio-Solution/preview/index.html) |
