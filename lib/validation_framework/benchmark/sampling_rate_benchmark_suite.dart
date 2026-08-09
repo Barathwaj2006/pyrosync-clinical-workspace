@@ -24,7 +24,7 @@ class SamplingRateBenchmarkSuite {
 
     for (final rate in rates) {
       for (final ch in channelCounts) {
-        final fps = 60.0;
+        const fps = 60.0;
         final cpu = (ch * (rate / 2500.0) * 0.35).clamp(1.2, 11.5);
         final mem = 42.0 + (ch * 1.1) + (rate * 0.004);
         final latency = 0.8 + (ch * 0.05);

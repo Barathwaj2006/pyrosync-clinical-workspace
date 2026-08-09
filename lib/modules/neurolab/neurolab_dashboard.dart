@@ -7,7 +7,7 @@ import '../../core_engines/signal_provider/signal_provider_interface.dart';
 import 'neurolab_engine.dart';
 
 class NeuroLabDashboard extends ConsumerWidget {
-  const NeuroLabDashboard({Key? key}) : super(key: key);
+  const NeuroLabDashboard({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -76,7 +76,7 @@ class NeuroLabDashboard extends ConsumerWidget {
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                     decoration: BoxDecoration(
-                                      color: isConnected ? PyroColors.statusSuccess.withOpacity(0.15) : PyroColors.statusDanger.withOpacity(0.15),
+                                      color: isConnected ? PyroColors.statusSuccess.withValues(alpha: 0.15) : PyroColors.statusDanger.withValues(alpha: 0.15),
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(color: isConnected ? PyroColors.statusSuccess : PyroColors.statusDanger),
                                     ),
@@ -228,7 +228,7 @@ class NeuroLabDashboard extends ConsumerWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isSelected ? PyroColors.medicalBlue.withOpacity(0.15) : const Color(0xFF121620),
+        color: isSelected ? PyroColors.medicalBlue.withValues(alpha: 0.15) : const Color(0xFF121620),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: isSelected ? PyroColors.medicalBlue : const Color(0xFF1E293B)),
       ),
@@ -267,7 +267,7 @@ class NeuroLabDashboard extends ConsumerWidget {
               Text(label, style: const TextStyle(fontSize: 12, color: Colors.white)),
               Switch(
                 value: enabled,
-                activeColor: PyroColors.statusWarning,
+                activeThumbColor: PyroColors.statusWarning,
                 onChanged: onToggle,
               ),
             ],

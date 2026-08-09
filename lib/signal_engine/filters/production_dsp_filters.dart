@@ -14,9 +14,9 @@ class ProductionDspFilters {
     if (samples.length < 3) return samples;
     final w0 = 2 * pi * notchFreqHz / samplingRateHz;
     final alpha = sin(w0) / (2 * 30.0);
-    final b0 = 1.0;
+    const b0 = 1.0;
     final b1 = -2 * cos(w0);
-    final b2 = 1.0;
+    const b2 = 1.0;
     final a0 = 1 + alpha;
     final a1 = -2 * cos(w0);
     final a2 = 1 - alpha;

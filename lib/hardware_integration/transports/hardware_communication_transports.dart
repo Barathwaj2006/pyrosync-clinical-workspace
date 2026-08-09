@@ -42,7 +42,7 @@ class BleTransport implements IHardwareTransport {
   @override
   final TransportType type = TransportType.ble;
   TransportConnectionState _state = TransportConnectionState.disconnected;
-  String _error = '';
+  final String _error = '';
   final _receiveController = StreamController<Uint8List>.broadcast();
   final _chunkController = StreamController<AcquisitionChunk>.broadcast();
 
@@ -80,7 +80,7 @@ class RfcommTransport implements IHardwareTransport {
   @override
   final TransportType type = TransportType.bluetoothClassic;
   TransportConnectionState _state = TransportConnectionState.disconnected;
-  String _error = '';
+  final String _error = '';
   final _receiveController = StreamController<Uint8List>.broadcast();
   final _chunkController = StreamController<AcquisitionChunk>.broadcast();
 
@@ -118,7 +118,7 @@ class UsbSerialTransport implements IHardwareTransport {
   @override
   final TransportType type = TransportType.usbSerial;
   TransportConnectionState _state = TransportConnectionState.disconnected;
-  String _error = '';
+  final String _error = '';
   final _receiveController = StreamController<Uint8List>.broadcast();
   final _chunkController = StreamController<AcquisitionChunk>.broadcast();
 
@@ -156,7 +156,7 @@ class NetworkTransport implements IHardwareTransport {
   @override
   final TransportType type = TransportType.wifiTcp;
   TransportConnectionState _state = TransportConnectionState.disconnected;
-  String _error = '';
+  final String _error = '';
   final _receiveController = StreamController<Uint8List>.broadcast();
   final _chunkController = StreamController<AcquisitionChunk>.broadcast();
 

@@ -118,7 +118,7 @@ class AuthState {
   });
 
   factory AuthState.initial() {
-    final defaultRole = UserRole.doctor;
+    const defaultRole = UserRole.doctor;
     return AuthState(
       isAuthenticated: true,
       profile: ClinicianProfile.defaultProfile(),

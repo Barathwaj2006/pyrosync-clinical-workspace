@@ -10,7 +10,7 @@ import '../../navigation/navigation_provider.dart';
 import '../../core/widgets/waveform_canvas.dart';
 
 class RecordingScreen extends ConsumerStatefulWidget {
-  const RecordingScreen({Key? key}) : super(key: key);
+  const RecordingScreen({super.key});
 
   @override
   ConsumerState<RecordingScreen> createState() => _RecordingScreenState();
@@ -19,7 +19,7 @@ class RecordingScreen extends ConsumerStatefulWidget {
 class _RecordingScreenState extends ConsumerState<RecordingScreen> {
   bool _isAcquiring = false;
   double _sweepSpeed = 30.0; // 15, 30, 60 mm/s
-  String _selectedEye = 'OD (Right Eye)';
+  final String _selectedEye = 'OD (Right Eye)';
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +69,7 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen> {
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                               margin: const EdgeInsets.symmetric(horizontal: 2),
                               decoration: BoxDecoration(
-                                color: isSelected ? PyroColors.medicalBlue.withOpacity(0.2) : Colors.transparent,
+                                color: isSelected ? PyroColors.medicalBlue.withValues(alpha: 0.2) : Colors.transparent,
                                 borderRadius: BorderRadius.circular(6),
                                 border: Border.all(color: isSelected ? PyroColors.medicalBlue : Colors.transparent),
                               ),

@@ -3,7 +3,7 @@ import '../../design_system/components/pyro_card.dart';
 import '../../design_system/typography/pyro_typography.dart';
 
 class HelpScreen extends StatelessWidget {
-  const HelpScreen({Key? key}) : super(key: key);
+  const HelpScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

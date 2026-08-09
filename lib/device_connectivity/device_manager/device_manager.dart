@@ -6,10 +6,9 @@ import '../providers/simulation/simulation_device_provider.dart';
 import '../providers/bluetooth/bluetooth_mock_provider.dart';
 import '../../hardware_integration/discovery/windows_hardware_discovery.dart';
 import '../../hardware_integration/driver_interface/hardware_handshake.dart';
-import '../../hardware_integration/protocol/hardware_protocol.dart';
 
 import '../../hardware_integration/pokidex/pokidex_dual_transport_manager.dart';
-import '../../hardware_integration/protocol/pokidex_hardware_protocol.dart';
+import '../../hardware_integration/pokidex/pokidex_qr_payload.dart';
 
 class DeviceManagerState {
   final ProviderType activeProviderType;
@@ -262,6 +261,58 @@ class DeviceManagerNotifier extends StateNotifier<DeviceManagerState> {
       errorMessage: null,
       isSimulated: false,
     );
+  }
+
+  Future<PokidexQrPayload?> startPokidexQrPairing({int port = 8765}) async {
+    state = DeviceManagerState(
+      activeProviderType: ProviderType.wifi,
+      connectionState: DeviceConnectionState.connecting,
+      activeDeviceInfo: null,
+      diagnostics: state.diagnostics,
+      discoveredDevices: state.discoveredDevices,
+      errorMessage: null,
+      isSimulated: false,
+      isPokidexActive: true,
+    );
+
+    final payload = await pokidexManager.startQrPairingServer(port: port);
+    if (payload != null) {
+      pokidexManager.pairingServer.stateStream.listen((serverState) {
+        DeviceInfo? info = state.activeDeviceInfo;
+
+        if (serverState == DeviceConnectionState.verified || serverState == DeviceConnectionState.streaming) {
+          info = DeviceInfo(
+            deviceId: 'POKIDEX-QR-${payload.sessionId}',
+            deviceName: 'Pokidex Android EEG Stimulator (${payload.sessionId})',
+            manufacturer: 'Pyromatics Bio Solutions (Pokidex)',
+            model: 'Pokidex-v1.0-Android',
+            serialNumber: 'SN-${payload.sessionId}',
+            firmwareVersion: 'v1.0-Android',
+            batteryPercentage: 99.0,
+            samplingRateHz: 250.0,
+            channelCount: 4,
+            signalQualityScore: 99.9,
+            temperatureCelsius: 36.8,
+            uptime: const Duration(minutes: 1),
+            providerType: ProviderType.wifi,
+            isSimulated: false,
+          );
+        }
+
+        state = DeviceManagerState(
+          activeProviderType: ProviderType.wifi,
+          connectionState: serverState,
+          activeDeviceInfo: info,
+          diagnostics: state.diagnostics,
+          discoveredDevices: state.discoveredDevices,
+          errorMessage: null,
+          isSimulated: false,
+          isPokidexActive: true,
+        );
+      });
+    }
+
+    return payload;
   }
 
   Future<bool> connectPokidexWifi(String ip, {int port = 8765}) async {

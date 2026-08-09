@@ -10,7 +10,7 @@ class WindowsSerialDiscovery {
 
     try {
       // Query Windows WMI / CIM for Ports with PNP details (COM number, Name, VID/PID, Manufacturer)
-      final cmd = '''
+      const cmd = '''
       Get-CimInstance Win32_PnPEntity | Where-Object { \$_.PNPClass -eq 'Ports' -or \$_.Name -match 'COM\\d+' } | Select-Object Name, Manufacturer, PNPDeviceID | ConvertTo-Json
       ''';
 

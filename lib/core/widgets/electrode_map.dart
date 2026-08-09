@@ -8,10 +8,10 @@ class ElectrodeMapWidget extends StatelessWidget {
   final bool isDark;
 
   const ElectrodeMapWidget({
-    Key? key,
+    super.key,
     required this.impedances,
     this.isDark = true,
-  }) : super(key: key);
+  });
 
   Color _getImpedanceColor(double kohm) {
     if (kohm < 5.0) return AppColors.statusSuccess; // Green
@@ -39,9 +39,9 @@ class ElectrodeMapWidget extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: AppColors.statusSuccess.withOpacity(0.15),
+                  color: AppColors.statusSuccess.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.statusSuccess.withOpacity(0.4)),
+                  border: Border.all(color: AppColors.statusSuccess.withValues(alpha: 0.4)),
                 ),
                 child: Row(
                   children: [
@@ -104,13 +104,13 @@ class ElectrodeMapWidget extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           // Legend Footer
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _LegendItem(color: AppColors.statusSuccess, label: '< 5 kΩ (Optimal)'),
-              const SizedBox(width: 16),
+              SizedBox(width: 16),
               _LegendItem(color: AppColors.statusWarning, label: '5 - 10 kΩ (Check)'),
-              const SizedBox(width: 16),
+              SizedBox(width: 16),
               _LegendItem(color: AppColors.statusDanger, label: '> 10 kΩ (High)'),
             ],
           ),
@@ -132,11 +132,11 @@ class ElectrodeMapWidget extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.2),
+              color: color.withValues(alpha: 0.2),
               shape: BoxShape.circle,
               border: Border.all(color: color, width: 2),
               boxShadow: [
-                BoxShadow(color: color.withOpacity(0.3), blurRadius: 8),
+                BoxShadow(color: color.withValues(alpha: 0.3), blurRadius: 8),
               ],
             ),
             child: Center(

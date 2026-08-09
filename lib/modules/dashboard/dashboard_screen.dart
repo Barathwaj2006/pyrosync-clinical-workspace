@@ -11,7 +11,7 @@ import '../../navigation/navigation_provider.dart';
 import '../patients/patients_screen.dart';
 
 class DashboardScreen extends ConsumerWidget {
-  const DashboardScreen({Key? key}) : super(key: key);
+  const DashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -178,7 +178,7 @@ class DashboardScreen extends ConsumerWidget {
                                             children: [
                                               CircleAvatar(
                                                 radius: 16,
-                                                backgroundColor: PyroColors.medicalBlue.withOpacity(0.2),
+                                                backgroundColor: PyroColors.medicalBlue.withValues(alpha: 0.2),
                                                 child: Text(p.fullName[0], style: const TextStyle(color: PyroColors.medicalBlue, fontWeight: FontWeight.bold)),
                                               ),
                                               const SizedBox(width: 12),
@@ -193,7 +193,7 @@ class DashboardScreen extends ConsumerWidget {
                                           ),
                                           ElevatedButton(
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: PyroColors.medicalBlue.withOpacity(0.15),
+                                              backgroundColor: PyroColors.medicalBlue.withValues(alpha: 0.15),
                                               foregroundColor: PyroColors.medicalBlue,
                                               elevation: 0,
                                             ),

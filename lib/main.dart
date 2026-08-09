@@ -15,7 +15,7 @@ void main() {
 }
 
 class PyroSyncApp extends ConsumerWidget {
-  const PyroSyncApp({Key? key}) : super(key: key);
+  const PyroSyncApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

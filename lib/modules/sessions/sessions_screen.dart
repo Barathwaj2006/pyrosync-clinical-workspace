@@ -8,7 +8,7 @@ import '../../core_engines/patient/patient_engine.dart';
 import '../../navigation/navigation_provider.dart';
 
 class SessionsScreen extends ConsumerWidget {
-  const SessionsScreen({Key? key}) : super(key: key);
+  const SessionsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -66,7 +66,7 @@ class SessionsScreen extends ConsumerWidget {
                         margin: const EdgeInsets.only(bottom: 12),
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: isSelected ? PyroColors.medicalBlue.withOpacity(0.12) : const Color(0xFF151C2C),
+                          color: isSelected ? PyroColors.medicalBlue.withValues(alpha: 0.12) : const Color(0xFF151C2C),
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(color: isSelected ? PyroColors.medicalBlue : const Color(0xFF1E293B)),
                         ),
@@ -92,9 +92,9 @@ class SessionsScreen extends ConsumerWidget {
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                   decoration: BoxDecoration(
-                                    color: PyroColors.medicalBlue.withOpacity(0.15),
+                                    color: PyroColors.medicalBlue.withValues(alpha: 0.15),
                                     borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(color: PyroColors.medicalBlue.withOpacity(0.4)),
+                                    border: Border.all(color: PyroColors.medicalBlue.withValues(alpha: 0.4)),
                                   ),
                                   child: Text(s.status.name.toUpperCase(), style: const TextStyle(fontSize: 10, color: PyroColors.medicalBlue, fontWeight: FontWeight.bold)),
                                 ),
@@ -177,7 +177,7 @@ class SessionsScreen extends ConsumerWidget {
                   const Text('Select Patient', style: TextStyle(color: PyroColors.medicalBlue, fontSize: 12, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 6),
                   DropdownButtonFormField<String>(
-                    value: selectedPatientId,
+                    initialValue: selectedPatientId,
                     dropdownColor: const Color(0xFF151C2C),
                     style: const TextStyle(color: Colors.white),
                     decoration: const InputDecoration(border: OutlineInputBorder()),
@@ -190,7 +190,7 @@ class SessionsScreen extends ConsumerWidget {
                   const Text('Acquisition Protocol', style: TextStyle(color: PyroColors.medicalBlue, fontSize: 12, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 6),
                   DropdownButtonFormField<String>(
-                    value: selectedProtocol,
+                    initialValue: selectedProtocol,
                     dropdownColor: const Color(0xFF151C2C),
                     style: const TextStyle(color: Colors.white),
                     decoration: const InputDecoration(border: OutlineInputBorder()),

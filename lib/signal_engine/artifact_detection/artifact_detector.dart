@@ -30,8 +30,8 @@ class ArtifactDetector {
     final muscleConf = muscleDetected ? (meanDiff / 25.0).clamp(0.0, 1.0) : 0.08;
 
     // 3. 50 Hz Line Noise Detection
-    final lineNoiseDetected = false;
-    final lineNoiseConf = 0.02;
+    const lineNoiseDetected = false;
+    const lineNoiseConf = 0.02;
 
     // 4. Baseline Drift Detection (Slow trend slope)
     final driftDetected = (signal.first - signal.last).abs() > 30.0;

@@ -15,7 +15,7 @@ class GlassCard extends StatelessWidget {
   final Border? customBorder;
 
   const GlassCard({
-    Key? key,
+    super.key,
     required this.child,
     this.padding,
     this.margin,
@@ -25,7 +25,7 @@ class GlassCard extends StatelessWidget {
     this.onTap,
     this.borderRadius = AppSpacing.radiusMd,
     this.customBorder,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,10 +40,10 @@ class GlassCard extends StatelessWidget {
               color: isDark ? AppColors.glassBorderDark : AppColors.glassBorderLight,
               width: 1,
             ),
-        color: isDark ? AppColors.darkSurfaceCard.withOpacity(0.7) : AppColors.lightSurfaceBase.withOpacity(0.85),
+        color: isDark ? AppColors.darkSurfaceCard.withValues(alpha: 0.7) : AppColors.lightSurfaceBase.withValues(alpha: 0.85),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.35 : 0.05),
+            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.05),
             blurRadius: 24,
             offset: const Offset(0, 8),
           ),

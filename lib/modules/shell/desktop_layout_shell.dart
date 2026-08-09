@@ -21,11 +21,12 @@ import '../ai_workspace/ai_workspace_screen.dart';
 import '../reports/reports_screen.dart';
 import '../neurolab/neurolab_dashboard.dart';
 import '../settings/settings_screen.dart';
+import '../settings/pokidex_qr_dialog.dart';
 
 final rightPanelOpenProvider = StateProvider<bool>((ref) => true);
 
 class DesktopLayoutShell extends ConsumerWidget {
-  const DesktopLayoutShell({Key? key}) : super(key: key);
+  const DesktopLayoutShell({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -104,7 +105,7 @@ class DesktopLayoutShell extends ConsumerWidget {
     return Container(
       height: 54,
       decoration: BoxDecoration(
-        color: isDark ? PyroColors.darkSurfaceBase.withOpacity(0.85) : PyroColors.lightSurfaceBase.withOpacity(0.9),
+        color: isDark ? PyroColors.darkSurfaceBase.withValues(alpha: 0.85) : PyroColors.lightSurfaceBase.withValues(alpha: 0.9),
         border: Border(
           bottom: BorderSide(
             color: isDark ? PyroColors.darkBorder : PyroColors.lightBorder,
@@ -188,6 +189,17 @@ class DesktopLayoutShell extends ConsumerWidget {
                           isDark: isDark,
                           onTap: () => ref.read(currentScreenProvider.notifier).navigateTo(PyroScreen.settings),
                         ),
+                        const SizedBox(width: 8),
+                        ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: PyroColors.medicalBlue,
+                            foregroundColor: Colors.black,
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          ),
+                          icon: const Icon(Icons.qr_code, size: 16),
+                          label: const Text('CONNECT POKIDEX', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
+                          onPressed: () => PokidexQrDialog.show(context),
+                        ),
                       ],
                     ),
                   ),
@@ -213,7 +225,7 @@ class DesktopLayoutShell extends ConsumerWidget {
                     children: [
                       CircleAvatar(
                         radius: 14,
-                        backgroundColor: PyroColors.medicalBlue.withOpacity(0.2),
+                        backgroundColor: PyroColors.medicalBlue.withValues(alpha: 0.2),
                         child: Text(
                           authState.profile.fullName.isNotEmpty ? authState.profile.fullName[0].toUpperCase() : 'C',
                           style: TextStyle(
@@ -289,7 +301,7 @@ class DesktopLayoutShell extends ConsumerWidget {
     return Container(
       width: 220,
       decoration: BoxDecoration(
-        color: isDark ? PyroColors.darkSurfaceBase.withOpacity(0.9) : PyroColors.lightSurfaceBase,
+        color: isDark ? PyroColors.darkSurfaceBase.withValues(alpha: 0.9) : PyroColors.lightSurfaceBase,
         border: Border(
           right: BorderSide(
             color: isDark ? PyroColors.darkBorder : PyroColors.lightBorder,
@@ -332,7 +344,7 @@ class DesktopLayoutShell extends ConsumerWidget {
     return Container(
       width: 280,
       decoration: BoxDecoration(
-        color: isDark ? PyroColors.darkSurfaceBase.withOpacity(0.9) : PyroColors.lightSurfaceBase,
+        color: isDark ? PyroColors.darkSurfaceBase.withValues(alpha: 0.9) : PyroColors.lightSurfaceBase,
         border: Border(
           left: BorderSide(
             color: isDark ? PyroColors.darkBorder : PyroColors.lightBorder,
@@ -408,7 +420,7 @@ class DesktopLayoutShell extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? PyroColors.darkSurfaceCard.withOpacity(0.6) : PyroColors.lightSurfaceCard,
+        color: isDark ? PyroColors.darkSurfaceCard.withValues(alpha: 0.6) : PyroColors.lightSurfaceCard,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: isDark ? PyroColors.darkBorder : PyroColors.lightBorder),
       ),
@@ -524,13 +536,13 @@ class _NavItem extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       child: Material(
-        color: isSelected ? PyroColors.medicalBlue.withOpacity(0.12) : Colors.transparent,
+        color: isSelected ? PyroColors.medicalBlue.withValues(alpha: 0.12) : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: isSelected ? PyroColors.medicalBlue.withOpacity(0.5) : Colors.transparent,
+              color: isSelected ? PyroColors.medicalBlue.withValues(alpha: 0.5) : Colors.transparent,
             ),
           ),
           child: InkWell(
@@ -572,7 +584,7 @@ class _NavItem extends StatelessWidget {
 }
 
 class ClinicianSetupDialog extends ConsumerStatefulWidget {
-  const ClinicianSetupDialog({Key? key}) : super(key: key);
+  const ClinicianSetupDialog({super.key});
 
   @override
   ConsumerState<ClinicianSetupDialog> createState() => _ClinicianSetupDialogState();

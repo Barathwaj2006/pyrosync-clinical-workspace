@@ -4,13 +4,20 @@ enum ProviderType { usbSerial, ble, bluetoothClassic, wifi, simulation, none }
 
 enum DeviceConnectionState {
   noDevice,
+  idle,
   scanning,
   devicesFound,
   userSelectionRequired,
   connecting,
+  discoveringServices,
   verifying,
+  waitingForSignal,
+  verified,
+  streaming,
+  unstable,
   connected,
   disconnecting,
+  disconnected,
   error,
 }
 
@@ -174,6 +181,56 @@ class DeviceDiagnostics {
       signalInterruptions: 0,
       connectionQualityScore: 0.0,
       bufferSizeBytes: 4096,
+    );
+  }
+}
+
+class PokidexDiagnosticsMetrics {
+  final int packetsReceived;
+  final int packetsExpected;
+  final int packetsLost;
+  final double packetLossPercentage;
+  final int duplicatePackets;
+  final int malformedPackets;
+  final int outOfOrderPackets;
+  final double configuredRateHz;
+  final double actualRateHz;
+  final double jitterMs;
+  final double latencyMs;
+  final String statusText;
+  final List<String> rejectionReasons;
+
+  PokidexDiagnosticsMetrics({
+    required this.packetsReceived,
+    required this.packetsExpected,
+    required this.packetsLost,
+    required this.packetLossPercentage,
+    required this.duplicatePackets,
+    required this.malformedPackets,
+    required this.outOfOrderPackets,
+    required this.configuredRateHz,
+    required this.actualRateHz,
+    required this.jitterMs,
+    required this.latencyMs,
+    required this.statusText,
+    required this.rejectionReasons,
+  });
+
+  factory PokidexDiagnosticsMetrics.empty() {
+    return PokidexDiagnosticsMetrics(
+      packetsReceived: 0,
+      packetsExpected: 0,
+      packetsLost: 0,
+      packetLossPercentage: 0.0,
+      duplicatePackets: 0,
+      malformedPackets: 0,
+      outOfOrderPackets: 0,
+      configuredRateHz: 250.0,
+      actualRateHz: 0.0,
+      jitterMs: 0.0,
+      latencyMs: 0.0,
+      statusText: 'NO DEVICE CONNECTED',
+      rejectionReasons: const [],
     );
   }
 }

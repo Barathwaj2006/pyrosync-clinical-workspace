@@ -33,8 +33,6 @@ class PyroTheme {
         onSecondary: Colors.white,
         error: PyroColors.statusDanger,
         onError: Colors.white,
-        background: isDark ? PyroColors.darkCanvas : PyroColors.lightCanvas,
-        onBackground: isDark ? PyroColors.textPrimaryDark : PyroColors.textPrimaryLight,
         surface: isDark ? PyroColors.darkSurfaceBase : PyroColors.lightSurfaceBase,
         onSurface: isDark ? PyroColors.textPrimaryDark : PyroColors.textPrimaryLight,
       ),

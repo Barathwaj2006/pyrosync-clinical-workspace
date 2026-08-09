@@ -8,7 +8,7 @@ import '../../core_engines/patient/patient_engine.dart';
 import '../../navigation/navigation_provider.dart';
 
 class AnalysisScreen extends ConsumerStatefulWidget {
-  const AnalysisScreen({Key? key}) : super(key: key);
+  const AnalysisScreen({super.key});
 
   @override
   ConsumerState<AnalysisScreen> createState() => _AnalysisScreenState();
@@ -54,7 +54,7 @@ class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
                       style: OutlinedButton.styleFrom(
                         foregroundColor: _isInvertedPolarity ? PyroColors.medicalBlue : Colors.white,
                         side: BorderSide(color: _isInvertedPolarity ? PyroColors.medicalBlue : const Color(0xFF1E293B)),
-                        backgroundColor: _isInvertedPolarity ? PyroColors.medicalBlue.withOpacity(0.15) : const Color(0xFF151C2C),
+                        backgroundColor: _isInvertedPolarity ? PyroColors.medicalBlue.withValues(alpha: 0.15) : const Color(0xFF151C2C),
                       ),
                       icon: const Icon(Icons.swap_vert, size: 16),
                       label: Text('Invert Polarity: ${_isInvertedPolarity ? "ON" : "OFF"}', style: const TextStyle(fontWeight: FontWeight.bold)),
@@ -111,9 +111,9 @@ class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
                                       child: Column(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          Icon(Icons.show_chart, size: 72, color: PyroColors.medicalBlue.withOpacity(0.8)),
+                                          Icon(Icons.show_chart, size: 72, color: PyroColors.medicalBlue.withValues(alpha: 0.8)),
                                           const SizedBox(height: 12),
-                                          Text(
+                                          const Text(
                                             'Averaged Signal Trace (64 Sweeps Passed)',
                                             style: TextStyle(color: PyroColors.medicalBlue, fontWeight: FontWeight.bold, fontSize: 14),
                                           ),

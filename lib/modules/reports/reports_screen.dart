@@ -5,11 +5,10 @@ import '../../design_system/typography/pyro_typography.dart';
 import '../../design_system/colors/pyro_colors.dart';
 import '../../core_engines/auth/auth_engine.dart';
 import '../../core_engines/session/session_engine.dart';
-import '../../core_engines/patient/patient_engine.dart';
 import '../../navigation/navigation_provider.dart';
 
 class ReportsScreen extends ConsumerWidget {
-  const ReportsScreen({Key? key}) : super(key: key);
+  const ReportsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -128,8 +127,8 @@ class ReportsScreen extends ConsumerWidget {
                           const SizedBox(height: 12),
                           Table(
                             border: TableBorder.all(color: const Color(0xFF1E293B)),
-                            children: [
-                              const TableRow(
+                            children: const [
+                              TableRow(
                                 decoration: BoxDecoration(color: Color(0xFF121620)),
                                 children: [
                                   Padding(padding: EdgeInsets.all(8), child: Text('PARAMETER', style: TextStyle(fontWeight: FontWeight.bold, color: PyroColors.medicalBlue, fontSize: 11))),
@@ -140,10 +139,10 @@ class ReportsScreen extends ConsumerWidget {
                               ),
                               TableRow(
                                 children: [
-                                  const Padding(padding: EdgeInsets.all(8), child: Text('P100 Peak Latency', style: TextStyle(color: Colors.white, fontSize: 12))),
-                                  const Padding(padding: EdgeInsets.all(8), child: Text('102.4 ms', style: TextStyle(color: Colors.white, fontSize: 12))),
-                                  const Padding(padding: EdgeInsets.all(8), child: Text('95.0 – 108.0 ms', style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12))),
-                                  Padding(padding: const EdgeInsets.all(8), child: Text('NORMAL', style: TextStyle(color: PyroColors.statusSuccess, fontWeight: FontWeight.bold, fontSize: 12))),
+                                  Padding(padding: EdgeInsets.all(8), child: Text('P100 Peak Latency', style: TextStyle(color: Colors.white, fontSize: 12))),
+                                  Padding(padding: EdgeInsets.all(8), child: Text('102.4 ms', style: TextStyle(color: Colors.white, fontSize: 12))),
+                                  Padding(padding: EdgeInsets.all(8), child: Text('95.0 – 108.0 ms', style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12))),
+                                  Padding(padding: EdgeInsets.all(8), child: Text('NORMAL', style: TextStyle(color: PyroColors.statusSuccess, fontWeight: FontWeight.bold, fontSize: 12))),
                                 ],
                               ),
                             ],
@@ -164,7 +163,7 @@ class ReportsScreen extends ConsumerWidget {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('ELECTRONICALLY SIGNED BY:', style: TextStyle(fontSize: 10, color: Color(0xFF94A3B8), fontWeight: FontWeight.bold)),
+                                  const Text('ELECTRONICALLY SIGNED BY:', style: TextStyle(fontSize: 10, color: Color(0xFF94A3B8), fontWeight: FontWeight.bold)),
                                   const SizedBox(height: 4),
                                   Text('${authState.profile.fullName}, ${authState.profile.credentials}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
                                 ],

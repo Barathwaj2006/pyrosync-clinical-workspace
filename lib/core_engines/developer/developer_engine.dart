@@ -81,7 +81,7 @@ class DeveloperEngineNotifier extends StateNotifier<DeveloperEngineState> {
 class DeveloperShortcutListener extends ConsumerWidget {
   final Widget child;
 
-  const DeveloperShortcutListener({Key? key, required this.child}) : super(key: key);
+  const DeveloperShortcutListener({super.key, required this.child});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -109,7 +109,7 @@ class DeveloperShortcutListener extends ConsumerWidget {
 }
 
 class _DeveloperOverlayWidget extends ConsumerWidget {
-  const _DeveloperOverlayWidget({Key? key}) : super(key: key);
+  const _DeveloperOverlayWidget();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -138,11 +138,11 @@ class _DeveloperOverlayWidget extends ConsumerWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
+                  const Row(
                     children: [
-                      const Icon(Icons.bug_report, size: 16, color: Color(0xFF00E5FF)),
-                      const SizedBox(width: 8),
-                      const Text(
+                      Icon(Icons.bug_report, size: 16, color: Color(0xFF00E5FF)),
+                      SizedBox(width: 8),
+                      Text(
                         'PYROSYNC DEVELOPER ENGINE (CTRL+SHIFT+D)',
                         style: TextStyle(fontFamily: 'RobotoMono', fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF00E5FF)),
                       ),

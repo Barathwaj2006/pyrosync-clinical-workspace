@@ -7,7 +7,7 @@ import '../../core_engines/session/session_engine.dart';
 import '../../navigation/navigation_provider.dart';
 
 class AiWorkspaceScreen extends ConsumerWidget {
-  const AiWorkspaceScreen({Key? key}) : super(key: key);
+  const AiWorkspaceScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,9 +34,9 @@ class AiWorkspaceScreen extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: PyroColors.statusWarning.withOpacity(0.15),
+                  color: PyroColors.statusWarning.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: PyroColors.statusWarning.withOpacity(0.4)),
+                  border: Border.all(color: PyroColors.statusWarning.withValues(alpha: 0.4)),
                 ),
                 child: const Row(
                   children: [
@@ -70,9 +70,9 @@ class AiWorkspaceScreen extends ConsumerWidget {
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                     decoration: BoxDecoration(
-                                      color: PyroColors.statusSuccess.withOpacity(0.15),
+                                      color: PyroColors.statusSuccess.withValues(alpha: 0.15),
                                       borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(color: PyroColors.statusSuccess.withOpacity(0.4)),
+                                      border: Border.all(color: PyroColors.statusSuccess.withValues(alpha: 0.4)),
                                     ),
                                     child: const Text('🎯 Confidence: 94.2%', style: TextStyle(fontSize: 11, color: PyroColors.statusSuccess, fontWeight: FontWeight.bold)),
                                   ),

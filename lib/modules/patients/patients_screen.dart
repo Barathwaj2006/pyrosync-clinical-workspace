@@ -8,7 +8,7 @@ import '../../core_engines/session/session_engine.dart';
 import '../../navigation/navigation_provider.dart';
 
 class PatientsScreen extends ConsumerWidget {
-  const PatientsScreen({Key? key}) : super(key: key);
+  const PatientsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -83,7 +83,7 @@ class PatientsScreen extends ConsumerWidget {
                               return Container(
                                 margin: const EdgeInsets.only(bottom: 8),
                                 decoration: BoxDecoration(
-                                  color: isSelected ? PyroColors.medicalBlue.withOpacity(0.15) : const Color(0xFF121620),
+                                  color: isSelected ? PyroColors.medicalBlue.withValues(alpha: 0.15) : const Color(0xFF121620),
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(color: isSelected ? PyroColors.medicalBlue : const Color(0xFF1E293B)),
                                 ),
@@ -218,7 +218,7 @@ class PatientsScreen extends ConsumerWidget {
 }
 
 class RegisterPatientDialog extends ConsumerStatefulWidget {
-  const RegisterPatientDialog({Key? key}) : super(key: key);
+  const RegisterPatientDialog({super.key});
 
   @override
   ConsumerState<RegisterPatientDialog> createState() => _RegisterPatientDialogState();
@@ -247,7 +247,7 @@ class _RegisterPatientDialogState extends ConsumerState<RegisterPatientDialog> {
               _buildTextField('Medical Record Number (MRN)', _mrnController, 'e.g. MRN-1002'),
               _buildTextField('Date of Birth (YYYY-MM-DD)', _dobController, 'e.g. 1980-05-15'),
               DropdownButtonFormField<String>(
-                value: _gender,
+                initialValue: _gender,
                 dropdownColor: const Color(0xFF151C2C),
                 style: const TextStyle(color: Colors.white),
                 decoration: const InputDecoration(labelText: 'Gender', labelStyle: TextStyle(color: PyroColors.medicalBlue)),

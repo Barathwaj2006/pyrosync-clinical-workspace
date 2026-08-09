@@ -2,10 +2,12 @@ import 'dart:async';
 import 'pokidex_signal_frame.dart';
 import 'pokidex_websocket_transport.dart';
 import 'pokidex_ble_transport.dart';
+import 'pokidex_qr_pairing_server.dart';
+import 'pokidex_qr_payload.dart';
 import '../transports/hardware_communication_transports.dart';
 
 class TransportStats {
-  final String transportName; // 'Wi-Fi (WebSocket)' or 'Bluetooth LE (Nordic UART)'
+  final String transportName;
   int framesReceived = 0;
   int bytesReceived = 0;
   int droppedSequenceFrames = 0;
@@ -45,21 +47,57 @@ class TransportStats {
 }
 
 class PokidexDualTransportManager {
+  final PokidexQrPairingServer pairingServer = PokidexQrPairingServer();
   final PokidexWebSocketTransport wifiTransport = PokidexWebSocketTransport();
   final PokidexBleTransport bleTransport = PokidexBleTransport();
 
   final TransportStats wifiStats = TransportStats('Wi-Fi (WebSocket)');
-  final TransportStats bleStats = TransportStats('Bluetooth LE (Nordic UART)');
+  final TransportStats bleStats = TransportStats('Bluetooth LE (GATT FE51)');
 
   final _mergedChunkController = StreamController<AcquisitionChunk>.broadcast();
+  StreamSubscription? _pairingSub;
   StreamSubscription? _wifiSub;
   StreamSubscription? _bleSub;
 
   Stream<AcquisitionChunk> get mergedChunkStream => _mergedChunkController.stream;
 
+  Future<PokidexQrPayload?> startQrPairingServer({int port = 8765}) async {
+    wifiStats.connectionEventsCount++;
+    wifiStats.logEvent('Starting QR Pairing WebSocket Server on port $port...');
+
+    final payload = await pairingServer.startPairingServer(port: port);
+    if (payload != null) {
+      wifiStats.logEvent('QR Pairing Server running on ws://${payload.host}:$port (Session: ${payload.sessionId})');
+      _pairingSub?.cancel();
+      _pairingSub = pairingServer.chunkStream.listen((chunk) {
+        wifiStats.recordFrame(PokidexSignalFrame(
+          metadata: PokidexFrameMetadata(
+            source: 'Pokidex-Wifi',
+            signalType: 'eeg',
+            channelCount: chunk.channelCount,
+            channelNames: List.generate(chunk.channelCount, (i) => 'CH${i + 1}'),
+            samplingRateHz: chunk.samplingRateHz,
+            unit: 'uV',
+            sessionId: payload.sessionId,
+          ),
+          timestampMs: chunk.timestamp.millisecondsSinceEpoch,
+          sequence: chunk.sequence,
+          channelSamples: chunk.channelSamples,
+          events: const [],
+          transportSource: 'wifi',
+          arrivalTimestamp: chunk.timestamp,
+        ));
+        _mergedChunkController.add(chunk);
+      });
+    } else {
+      wifiStats.logEvent('Failed to start QR Pairing WebSocket Server.');
+    }
+    return payload;
+  }
+
   Future<bool> connectWifi(String ip, {int port = 8765}) async {
     wifiStats.connectionEventsCount++;
-    wifiStats.logEvent('Initiating Wi-Fi WebSocket connection to ws://$ip:$port...');
+    wifiStats.logEvent('Initiating Wi-Fi WebSocket client connection to ws://$ip:$port...');
 
     final success = await wifiTransport.connect(ip, port: port);
     if (success) {
@@ -77,11 +115,11 @@ class PokidexDualTransportManager {
 
   Future<bool> connectBle(String macAddress) async {
     bleStats.connectionEventsCount++;
-    bleStats.logEvent('Initiating BLE Nordic UART connection to MAC: $macAddress...');
+    bleStats.logEvent('Initiating BLE FE50/FE51 GATT connection to MAC: $macAddress...');
 
     final success = await bleTransport.connect(macAddress);
     if (success) {
-      bleStats.logEvent('Bluetooth LE Nordic UART CONNECTED.');
+      bleStats.logEvent('Bluetooth LE GATT FE51 Notify CONNECTED.');
       _bleSub?.cancel();
       _bleSub = bleTransport.frameStream.listen((frame) {
         bleStats.recordFrame(frame);
@@ -96,7 +134,9 @@ class PokidexDualTransportManager {
   Future<void> disconnectWifi() async {
     wifiStats.disconnectionEventsCount++;
     wifiStats.logEvent('Wi-Fi WebSocket DISCONNECTED by user.');
+    await pairingServer.stopPairingServer();
     await wifiTransport.disconnect();
+    await _pairingSub?.cancel();
     await _wifiSub?.cancel();
   }
 

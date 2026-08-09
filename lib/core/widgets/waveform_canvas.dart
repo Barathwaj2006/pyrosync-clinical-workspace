@@ -11,13 +11,13 @@ class WaveformCanvas extends StatelessWidget {
   final bool isDark;
 
   const WaveformCanvas({
-    Key? key,
+    super.key,
     this.title = 'Oz - Cz (VEP Pattern Reversal Averaged Trace)',
     this.showSecondaryTrace = true,
     this.p100LatencyPrimary = 101.4,
     this.p100LatencySecondary = 114.8,
     this.isDark = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +75,7 @@ class WaveformCanvas extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF121620).withOpacity(0.8),
+                  color: const Color(0xFF121620).withValues(alpha: 0.8),
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(color: const Color(0xFF1E293B)),
                 ),
@@ -258,7 +258,7 @@ class VepPainter extends CustomPainter {
 
     // Latency Guide Line
     final guidePaint = Paint()
-      ..color = color.withOpacity(0.4)
+      ..color = color.withValues(alpha: 0.4)
       ..strokeWidth = 1.0
       ..style = PaintingStyle.stroke;
 

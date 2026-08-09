@@ -86,7 +86,7 @@ class WaveformPainter extends CustomPainter {
       canvas.drawLine(
         Offset(0, centerY),
         Offset(size.width, centerY),
-        Paint()..color = Colors.white.withOpacity(0.05),
+        Paint()..color = Colors.white.withValues(alpha: 0.05),
       );
 
       final rawData = rawSignals[config.label] ?? [];
@@ -107,7 +107,7 @@ class WaveformPainter extends CustomPainter {
         canvas.drawPath(
           path,
           Paint()
-            ..color = config.color.withOpacity(0.35)
+            ..color = config.color.withValues(alpha: 0.35)
             ..strokeWidth = 1.0
             ..style = PaintingStyle.stroke,
         );

@@ -14,7 +14,7 @@ class BrainMap2dHeatmap extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF121620),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.white.withOpacity(0.08)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),
       padding: const EdgeInsets.all(12),
       child: Column(
@@ -87,7 +87,7 @@ class ScalpPainter extends CustomPainter {
       canvas.drawCircle(
         pos,
         14.0,
-        Paint()..color = nodeColor.withOpacity(0.25),
+        Paint()..color = nodeColor.withValues(alpha: 0.25),
       );
 
       canvas.drawCircle(pos, 6.0, Paint()..color = nodeColor);

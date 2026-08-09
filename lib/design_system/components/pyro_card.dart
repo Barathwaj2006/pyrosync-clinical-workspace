@@ -15,7 +15,7 @@ class PyroCard extends StatelessWidget {
   final Border? customBorder;
 
   const PyroCard({
-    Key? key,
+    super.key,
     required this.child,
     this.padding,
     this.margin,
@@ -25,7 +25,7 @@ class PyroCard extends StatelessWidget {
     this.onTap,
     this.borderRadius = PyroSpacing.radiusMd,
     this.customBorder,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,10 +40,10 @@ class PyroCard extends StatelessWidget {
               color: isDark ? PyroColors.glassBorderDark : PyroColors.glassBorderLight,
               width: 1,
             ),
-        color: isDark ? PyroColors.darkSurfaceCard.withOpacity(0.7) : PyroColors.lightSurfaceBase.withOpacity(0.85),
+        color: isDark ? PyroColors.darkSurfaceCard.withValues(alpha: 0.7) : PyroColors.lightSurfaceBase.withValues(alpha: 0.85),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.35 : 0.05),
+            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.05),
             blurRadius: 24,
             offset: const Offset(0, 8),
           ),

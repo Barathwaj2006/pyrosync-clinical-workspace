@@ -13,13 +13,13 @@ class NotchFilter50Hz implements ISignalFilter {
   @override
   List<double> process(List<double> input, double samplingRateHz) {
     if (input.length < 3) return input;
-    final f0 = 50.0;
+    const f0 = 50.0;
     final w0 = 2 * math.pi * f0 / samplingRateHz;
     final alpha = math.sin(w0) / (2 * 30.0); // Q = 30
 
-    final b0 = 1.0;
+    const b0 = 1.0;
     final b1 = -2 * math.cos(w0);
-    final b2 = 1.0;
+    const b2 = 1.0;
     final a0 = 1 + alpha;
     final a1 = -2 * math.cos(w0);
     final a2 = 1 - alpha;

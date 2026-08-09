@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:convert';
 import 'pokidex_signal_frame.dart';
 import '../transports/hardware_communication_transports.dart';
 

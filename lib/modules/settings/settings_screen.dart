@@ -9,9 +9,10 @@ import '../../core_engines/theme/theme_engine_controller.dart';
 import '../../device_connectivity/device_manager/device_manager.dart';
 import '../../device_connectivity/models/device_models.dart';
 import '../../hardware_integration/pokidex/pokidex_dual_transport_manager.dart';
+import 'pokidex_qr_dialog.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+  const SettingsScreen({super.key});
 
   @override
   ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
@@ -258,9 +259,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
                                 Container(
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
-                                    color: PyroColors.statusDanger.withOpacity(0.1),
+                                    color: PyroColors.statusDanger.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(6),
-                                    border: Border.all(color: PyroColors.statusDanger.withOpacity(0.4)),
+                                    border: Border.all(color: PyroColors.statusDanger.withValues(alpha: 0.4)),
                                   ),
                                   child: Text(
                                     deviceState.errorMessage!,
@@ -426,7 +427,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isSelected ? PyroColors.medicalBlue.withOpacity(0.12) : const Color(0xFF121620),
+        color: isSelected ? PyroColors.medicalBlue.withValues(alpha: 0.12) : const Color(0xFF121620),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: isSelected ? PyroColors.medicalBlue : const Color(0xFF1E293B)),
       ),
@@ -815,7 +816,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
       decoration: BoxDecoration(
         color: const Color(0xFF121620),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: PyroColors.medicalBlue.withOpacity(0.3)),
+        border: Border.all(color: PyroColors.medicalBlue.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -830,6 +831,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
             style: TextStyle(color: Color(0xFF94A3B8), fontSize: 11),
           ),
           const SizedBox(height: 12),
+
+          // Primary QR Pairing Button
+          ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: PyroColors.medicalBlue,
+              foregroundColor: Colors.black,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            ),
+            icon: const Icon(Icons.qr_code_scanner, size: 18),
+            label: const Text('CONNECT POKIDEX (QR PAIRING)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+            onPressed: () => PokidexQrDialog.show(context),
+          ),
+          const SizedBox(height: 14),
 
           // Wi-Fi Controls
           Row(
@@ -922,7 +936,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with SingleTick
       decoration: BoxDecoration(
         color: const Color(0xFF0F172A),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: color.withOpacity(0.4)),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
