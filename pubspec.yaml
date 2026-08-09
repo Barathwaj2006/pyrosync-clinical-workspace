@@ -1,5 +1,5 @@
 name: pyrosync
-description: "PyroSync Clinical Workspace - Commercial AI-Assisted Neurodiagnostic Platform by Pyromatics Bio Solutions"
+description: "Commercial-grade AI-assisted neurodiagnostic platform & biosignal acquisition workspace for VEP/EEG, featuring real Windows hardware discovery (BLE/USB/Network), Pokidex dual-transport streaming, 7-stage DSP engine, and CDSS report builder."
 publish_to: 'none'
 version: 1.0.0+1
 
